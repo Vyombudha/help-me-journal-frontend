@@ -31,7 +31,7 @@ export function useUpdateProject() {
       ...updatedProject
     }: UpdateProjectDTO & { id: string }) => {
       const { data } = await api.patch<SuccessResponse<UpdateProjectDTO>>(
-        `/project/${id}`,
+        `/projects/${id}`,
         updatedProject
       )
       return data.data

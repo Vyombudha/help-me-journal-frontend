@@ -5,9 +5,16 @@ import { Plus } from "lucide-react"
 import { useProjects } from "@/hooks/useProjects"
 import { ProjectCard } from "@/components/ProjectCard"
 import { EmptyData } from "@/components/EmptyData"
+import { useState } from "react"
+import { useCreateProject } from "@/hooks/useProjectMutations"
+import CreateProject from "@/components/CreateProject"
+import type { CreateProjectDTO } from "@/types/dtos"
 
 export default function HomePage() {
   const { data: projects, isLoading, isError } = useProjects()
+  const [newProjectMenuOpen, setNewProjectMenuOpen] = useState(false)
+  const createProject = useCreateProject()
+
   return (
     <div className="min:w-full h-full rounded-4xl bg-primary-foreground lg:w-9/10">
       <header className="flex flex-row items-center justify-between gap-16 px-8 py-12">
@@ -17,7 +24,7 @@ export default function HomePage() {
           placeholder="Search Projects..."
         />
         <div className="flex flex-row items-center justify-between gap-8">
-          <Button>
+          <Button onClick={() => setNewProjectMenuOpen(true)}>
             <Plus /> New Project
           </Button>
           <UserButton />
@@ -33,6 +40,16 @@ export default function HomePage() {
             <ProjectCard project={project} key={project.id} />
           ))}
       </main>
+
+      <CreateProject
+        open={newProjectMenuOpen}
+        onOpenChange={setNewProjectMenuOpen}
+        onConfirm={(newProjectData: CreateProjectDTO) =>
+          createProject.mutate(newProjectData, {
+            onSuccess: () => setNewProjectMenuOpen(false),
+          })
+        }
+      />
     </div>
   )
 }

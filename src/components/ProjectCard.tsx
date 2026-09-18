@@ -18,11 +18,16 @@ import {
 import { useState } from "react"
 import { Trash2 } from "lucide-react"
 import ConfirmDelete from "./ConfirmDelete"
-import { useDeleteProject } from "@/hooks/useProjectMutations"
+import { useDeleteProject, useUpdateProject } from "@/hooks/useProjectMutations"
+import EditProject from "./EditProject"
+import type { UpdateProjectDTO } from "@/types/dtos"
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [editProjectMenuOpen, setEditProjectMenuOpen] = useState(false)
   const deleteProject = useDeleteProject()
+  const updateProject = useUpdateProject();
+
   return (
     <div className="w-full">
       <ContextMenu>
@@ -30,7 +35,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <InfoCard project={project} />
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem>Edit</ContextMenuItem>
+          <ContextMenuItem
+          onClick={() => setEditProjectMenuOpen(true)}
+          >Edit</ContextMenuItem>
           <ContextMenuItem
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
@@ -40,6 +47,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
+
+
       <ConfirmDelete
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
@@ -51,6 +60,17 @@ export function ProjectCard({ project }: ProjectCardProps) {
           })
         }}
       />
+
+      <EditProject
+        open={editProjectMenuOpen}
+        onOpenChange={setEditProjectMenuOpen}
+        onConfirm={(updatedProjectData: UpdateProjectDTO) => updateProject.mutate({ id: project.id, ...updatedProjectData }, {
+          onSuccess: () => setEditProjectMenuOpen(false)
+        })}
+      />
+
+
+
     </div>
   )
 }

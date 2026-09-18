@@ -11,8 +11,14 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import type { EmptyDataProps } from "@/types/EmptyData.types"
+import CreateProject from "./CreateProject"
+import { useCreateProject } from "@/hooks/useProjectMutations"
+import { useState } from "react"
+import type { CreateProjectDTO } from "@/types/dtos"
 
 export function EmptyData({ dataName }: EmptyDataProps) {
+  const [newProjectMenuOpen, setNewProjectMenuOpen] = useState(false)
+  const createProject = useCreateProject()
   return (
     <Empty>
       <EmptyHeader>
@@ -26,7 +32,7 @@ export function EmptyData({ dataName }: EmptyDataProps) {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
-        <Button>Create {dataName}</Button>
+        <Button onClick={()=> setNewProjectMenuOpen(true)}>Create {dataName}</Button>
       </EmptyContent>
       <Button
         variant="link"
@@ -39,6 +45,18 @@ export function EmptyData({ dataName }: EmptyDataProps) {
           </a>
         }
       />
+
+      <CreateProject
+        open={newProjectMenuOpen}
+        onOpenChange={setNewProjectMenuOpen}
+        onConfirm={(newProjectData: CreateProjectDTO) =>
+          createProject.mutate(newProjectData, {
+            onSuccess: () => setNewProjectMenuOpen(false),
+          })
+        }
+      />
+
+
     </Empty>
   )
 }
