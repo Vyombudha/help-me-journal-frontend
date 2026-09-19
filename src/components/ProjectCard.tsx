@@ -16,17 +16,18 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { useState } from "react"
-import { Trash2 } from "lucide-react"
+import { Trash2,Pencil } from "lucide-react"
 import ConfirmDelete from "./ConfirmDelete"
 import { useDeleteProject, useUpdateProject } from "@/hooks/useProjectMutations"
 import EditProject from "./EditProject"
 import type { UpdateProjectDTO } from "@/types/dtos"
+import { Separator } from "./ui/separator"
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [editProjectMenuOpen, setEditProjectMenuOpen] = useState(false)
   const deleteProject = useDeleteProject()
-  const updateProject = useUpdateProject();
+  const updateProject = useUpdateProject()
 
   return (
     <div className="w-full">
@@ -35,9 +36,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <InfoCard project={project} />
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem
-          onClick={() => setEditProjectMenuOpen(true)}
-          >Edit</ContextMenuItem>
+          <ContextMenuItem onClick={() => setEditProjectMenuOpen(true)}>
+            <Pencil size={20} />
+            Edit
+          </ContextMenuItem>
+          <Separator/>
           <ContextMenuItem
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
@@ -47,7 +50,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
-
 
       <ConfirmDelete
         open={deleteOpen}
@@ -64,13 +66,15 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <EditProject
         open={editProjectMenuOpen}
         onOpenChange={setEditProjectMenuOpen}
-        onConfirm={(updatedProjectData: UpdateProjectDTO) => updateProject.mutate({ id: project.id, ...updatedProjectData }, {
-          onSuccess: () => setEditProjectMenuOpen(false)
-        })}
+        onConfirm={(updatedProjectData: UpdateProjectDTO) =>
+          updateProject.mutate(
+            { id: project.id, ...updatedProjectData },
+            {
+              onSuccess: () => setEditProjectMenuOpen(false),
+            }
+          )
+        }
       />
-
-
-
     </div>
   )
 }

@@ -32,7 +32,9 @@ export function EmptyData({ dataName }: EmptyDataProps) {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
-        <Button onClick={()=> setNewProjectMenuOpen(true)}>Create {dataName}</Button>
+        <Button onClick={() => setNewProjectMenuOpen(true)}>
+          Create {dataName}
+        </Button>
       </EmptyContent>
       <Button
         variant="link"
@@ -55,8 +57,6 @@ export function EmptyData({ dataName }: EmptyDataProps) {
           })
         }
       />
-
-
     </Empty>
   )
 }

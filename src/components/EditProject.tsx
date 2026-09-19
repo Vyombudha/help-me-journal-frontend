@@ -33,8 +33,8 @@ export default function EditProject({
         <DialogHeader>
           <DialogTitle>Update Project</DialogTitle>
           <DialogDescription>
-            Put the updated name and description of your project here. Click save
-            when you&apos;re done.
+            Put the updated name and description of your project here. Click
+            save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
 
@@ -42,7 +42,11 @@ export default function EditProject({
           <FieldGroup>
             <Field>
               <Label htmlFor="name-1">New Name</Label>
-              <Input id="name-1" name="name" defaultValue="Privacy Drive - v2" />
+              <Input
+                id="name-1"
+                name="name"
+                defaultValue="Privacy Drive - v2"
+              />
             </Field>
             <Field>
               <Label htmlFor="description-1">New Description</Label>
