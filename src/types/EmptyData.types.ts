@@ -1,3 +1,3 @@
 export type EmptyDataProps = {
-  dataName: string
+  dataName: "project" | "journal/note"
 }

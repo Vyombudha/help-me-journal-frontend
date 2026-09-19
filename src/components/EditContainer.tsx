@@ -11,20 +11,18 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import type { CreateProjectProps } from "@/types/CreateProject.types"
+import type { UpdateContainerProps } from "@/types/UpdateContainer.types"
 
-export default function CreateProject({
+export default function EditContainer({
   open,
   onOpenChange,
   onConfirm,
-}: CreateProjectProps) {
+}: UpdateContainerProps) {
   function handleSubmission(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    const name = formData.get("name") as string
-    const description = formData.get("description") as string
-
-    onConfirm({ name, description })
+    const newTitle = formData.get("name") as string
+    onConfirm({ newTitle, newMoods: undefined })
     onOpenChange(false) // close the dialog after confirming
   }
 
@@ -32,25 +30,21 @@ export default function CreateProject({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>New Project</DialogTitle>
+          <DialogTitle>Update Project</DialogTitle>
           <DialogDescription>
-            Put the name and description of your new project here. Click save
-            when you&apos;re done.
+            Put the updated name and description of your project here. Click
+            save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
 
-        <form id="new-project-form" onSubmit={handleSubmission}>
+        <form id="update-container-form" onSubmit={handleSubmission}>
           <FieldGroup>
             <Field>
-              <Label htmlFor="name-1">Name</Label>
-              <Input id="name-1" name="name" defaultValue="Privacy Drive" />
-            </Field>
-            <Field>
-              <Label htmlFor="description-1">Description</Label>
+              <Label htmlFor="name-1">New Title</Label>
               <Input
-                id="description-1"
-                name="description"
-                defaultValue="A clone of google drive made in go lang"
+                id="name-1"
+                name="name"
+                defaultValue="Privacy Drive - v2"
               />
             </Field>
           </FieldGroup>
@@ -58,7 +52,7 @@ export default function CreateProject({
 
         <DialogFooter>
           <DialogClose render={<Button variant="outline">Cancel</Button>} />
-          <Button type="submit" form="new-project-form">
+          <Button type="submit" form="update-container-form">
             Save changes
           </Button>
         </DialogFooter>

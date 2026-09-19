@@ -69,7 +69,7 @@ export interface CreateContainerDTO {
 
 export interface UpdateContainerDTO {
   newTitle: string
-  newMoods: Mood[]
+  newMoods: Mood[] | undefined
 }
 
 export interface CreateEntryDTO {

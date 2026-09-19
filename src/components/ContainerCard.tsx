@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import type { ProjectCardProps } from "@/types/ProjectCard.types"
 import {
   ContextMenu,
   ContextMenuContent,
@@ -17,24 +16,28 @@ import {
 import { useState } from "react"
 import { Trash2, Pencil } from "lucide-react"
 import ConfirmDelete from "./ConfirmDelete"
-import { useDeleteProject, useUpdateProject } from "@/hooks/useProjectMutations"
-import EditProject from "./EditProject"
-import type { UpdateProjectDTO } from "@/types/dtos"
+import type { UpdateContainerDTO } from "@/types/dtos"
 import { Separator } from "./ui/separator"
 import { Link } from "react-router-dom"
 import { Button } from "./ui/button"
+import type { ContainerCardProps } from "@/types/ContainerCard.types"
+import {
+  useDeleteContainer,
+  useUpdateContainer,
+} from "@/hooks/useContainerMutations"
+import EditContainer from "./EditContainer"
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ContainerCard({ container }: ContainerCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [editProjectMenuOpen, setEditProjectMenuOpen] = useState(false)
-  const deleteProject = useDeleteProject()
-  const updateProject = useUpdateProject()
+  const deleteContainer = useDeleteContainer()
+  const updateContainer = useUpdateContainer()
 
   return (
-    <div className="w-full">
+    <div className="h-full w-full">
       <ContextMenu>
         <ContextMenuTrigger>
-          <InfoCard project={project} />
+          <InfoCard container={container} />
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem onClick={() => setEditProjectMenuOpen(true)}>
@@ -56,7 +59,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         onConfirm={() => {
-          deleteProject.mutate(project.id, {
+          deleteContainer.mutate(container.id, {
             onSuccess: () => {
               setDeleteOpen(false)
             },
@@ -64,12 +67,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
         }}
       />
 
-      <EditProject
+      <EditContainer
         open={editProjectMenuOpen}
         onOpenChange={setEditProjectMenuOpen}
-        onConfirm={(updatedProjectData: UpdateProjectDTO) =>
-          updateProject.mutate(
-            { id: project.id, ...updatedProjectData },
+        onConfirm={(updatedContainerData: UpdateContainerDTO) =>
+          updateContainer.mutate(
+            { containerId: container.id, ...updatedContainerData },
             {
               onSuccess: () => setEditProjectMenuOpen(false),
             }
@@ -80,19 +83,21 @@ export function ProjectCard({ project }: ProjectCardProps) {
   )
 }
 
-function InfoCard({ project }: ProjectCardProps) {
+function InfoCard({ container }: ContainerCardProps) {
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-2">
       <CardHeader>
         <CardAction>
-          <Badge variant="secondary">{project.status}</Badge>
+          <Badge variant="secondary">{container.type}</Badge>
         </CardAction>
-        <CardTitle>{project.name}</CardTitle>
-        <CardDescription>{project.description}</CardDescription>
+        <CardTitle>{container.title}</CardTitle>
+        <CardDescription>{container.moods}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Link to={`/projects/${project.id}`} className="w-full">
-          <Button>View Project</Button>
+        <Link to={`/containers/${container.id}`} className="w-full">
+          <Button>
+            View {container.type === "JOURNAL" ? "Journal" : "Note"}
+          </Button>
         </Link>
       </CardFooter>
     </Card>
