@@ -16,7 +16,7 @@ export function App() {
       <Show when="signed-in">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/projects/:projectId" element={<ProjectPage />} />
+          <Route path="/projects/:projectId/*" element={<ProjectPage />} />
         </Routes>
       </Show>
     </div>

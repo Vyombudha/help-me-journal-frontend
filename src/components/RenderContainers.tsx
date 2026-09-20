@@ -3,7 +3,15 @@ import { useContainers } from "@/hooks/useContainers"
 import { useParams } from "react-router-dom"
 import { ContainerCard } from "./ContainerCard"
 
-export default function RenderContainers() {
+export default function ContainersWrapper() {
+  return (
+    <main className="min:grid-cols-1 grid flex-1 scrollbar-none content-start gap-16 overflow-y-auto px-4 py-8 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4">
+      <RenderContainers />
+    </main>
+  )
+}
+
+function RenderContainers() {
   const { projectId } = useParams<{ projectId: string }>()
 
   const { data: containers, isLoading, isError } = useContainers(projectId!)

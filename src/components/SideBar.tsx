@@ -23,12 +23,7 @@ export function SideBar({ open, onOpenChange }: SideBarProps) {
       <DropdownMenu open={open} onOpenChange={onOpenChange}>
         <DropdownMenuTrigger
           render={
-            <Button
-              onClick={() => onOpenChange}
-              size="icon-lg"
-              aria-label="open menu"
-              variant="outline"
-            >
+            <Button size="icon-lg" aria-label="open menu" variant="outline">
               <Menu />
             </Button>
           }
@@ -44,7 +39,7 @@ export function SideBar({ open, onOpenChange }: SideBarProps) {
                 .map((c) => {
                   const note: FileTreeItem = {
                     name: c.title,
-                    path: `containers/${c.id}`,
+                    path: `projects/${projectId}/containers/${c.id}`,
                   }
                   return note
                 })}
@@ -54,7 +49,7 @@ export function SideBar({ open, onOpenChange }: SideBarProps) {
                 .map((j) => {
                   const journal: FileTreeItem = {
                     name: j.title,
-                    path: `containers/${j.id}`,
+                    path: `projects/${projectId}/containers/${j.id}`,
                   }
                   return journal
                 })}

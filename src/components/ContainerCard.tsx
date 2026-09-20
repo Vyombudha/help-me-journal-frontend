@@ -94,7 +94,7 @@ function InfoCard({ container }: ContainerCardProps) {
         <CardDescription>{container.moods}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Link to={`/containers/${container.id}`} className="w-full">
+        <Link to={`containers/${container.id}`} className="w-full">
           <Button>
             View {container.type === "JOURNAL" ? "Journal" : "Note"}
           </Button>
