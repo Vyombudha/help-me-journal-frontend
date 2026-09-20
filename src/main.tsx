@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client"
+import { shadcn } from "@clerk/themes"
 
 import "./index.css"
 import App from "./App.tsx"
@@ -11,7 +12,7 @@ createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <ClerkProvider>
+        <ClerkProvider appearance={shadcn}>
           <App />
         </ClerkProvider>
       </ThemeProvider>

@@ -19,7 +19,7 @@ export function SideBar({ open, onOpenChange }: SideBarProps) {
   const { data: containers } = useContainers(projectId!)
 
   return (
-    <div className="fixed top-2 left-2 z-20">
+    <div className="fixed top-4 left-4 z-20">
       <DropdownMenu open={open} onOpenChange={onOpenChange}>
         <DropdownMenuTrigger
           render={

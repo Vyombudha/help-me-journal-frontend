@@ -12,8 +12,8 @@ export default function HomePage() {
   const createProject = useCreateProject()
 
   return (
-    <div className="flex h-full w-full items-center justify-center sm:p-0 lg:p-8">
-      <div className="flex h-full flex-col rounded-3xl bg-primary-foreground sm:w-full lg:w-9/10">
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="flex h-full flex-col rounded-3xl bg-background p-8">
         <header className="flex flex-row items-center justify-between gap-16 px-8 py-12">
           <Input
             className="h-full max-w-1/3"

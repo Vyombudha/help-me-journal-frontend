@@ -19,9 +19,9 @@ function ProjectPage() {
   return (
     <>
       <SideBar open={sideBarOpen} onOpenChange={setSideBarOpen} />
-      <div className="flex h-full w-full items-center justify-center sm:p-0 lg:p-8">
-        <div className="flex h-full flex-col rounded-3xl bg-primary-foreground sm:w-screen lg:w-9/10">
-          <header className="flex flex-row items-center justify-between gap-16 px-8 py-12">
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full flex-col rounded-3xl bg-background p-8">
+          <header className="flex flex-row items-center justify-between gap-16 p-8">
             <Input
               className="h-full max-w-1/3"
               type="search"
