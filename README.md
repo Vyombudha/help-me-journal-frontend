@@ -11,7 +11,8 @@ This frontend supports a lightweight planning and reflection workflow:
 - open a project detail view for a specific project
 - create and manage containers within a project
 - assign mood tags to containers
-- navigate between conainers through a sidebar/project tree
+- navigate between containers through a sidebar/project tree
+- create and edit entries inside containers
 - keep the experience focused on journaling and planning work
 
 The UI is built with Vite, React 19, Tailwind CSS, and reusable shadcn-style components.
@@ -23,6 +24,7 @@ The UI is built with Vite, React 19, Tailwind CSS, and reusable shadcn-style com
 - Per-project view at `/projects/:projectId`
 - Project sidebar with navigation between projects
 - Container creation with supported container types and moods
+- Entry creation and editing with a rich text editor
 - React Query-powered data fetching and mutation state
 - Axios client configured with a shared API base URL
 - Clerk JWT injection for authenticated backend requests
@@ -39,6 +41,7 @@ The UI is built with Vite, React 19, Tailwind CSS, and reusable shadcn-style com
 - Clerk
 - React Router
 - Lucide React
+- Tiptap
 
 ## Prerequisites
 
@@ -72,6 +75,8 @@ Notes:
 ```bash
 npm install
 ```
+
+3. Create a `.env` file in the project root and add the variables described in [Environment Variables](#environment-variables).
 
 ## Development
 
@@ -128,8 +133,8 @@ The app follows this basic flow:
 The app currently supports these key routes:
 
 - `/` — signed-in dashboard for viewing and creating projects
-- `/projects/:projectId` — project detail page with container list and sidebar navigation
-- `/projects/:projectId/containers/:containerId` — container detail route placeholder used by the current UI structure
+- `/projects/:projectId` — project detail page with the project container list and sidebar navigation
+- `/projects/:projectId/containers/:containerId` — entries for a selected container
 
 The app displays a sign-in prompt for signed-out users and routes only become available when the user is authenticated.
 
@@ -151,10 +156,11 @@ Key areas:
 
 - `src/App.tsx` — root app, auth gate, and route setup
 - `src/pages/HomePage.tsx` — dashboard for creating and viewing projects
-- `src/pages/ProjectPage.tsx` — project detail page with container creation and sidebar navigation
+- `src/pages/ProjectPage.tsx` — project detail page with container and entry navigation
 - `src/hooks/` — React Query hooks for projects, containers, and mutations
 - `src/lib/api.ts` — shared Axios instance
 - `src/lib/useApiAuth.ts` — Clerk token interceptor for authenticated requests
+- `src/components/EntryCard.tsx` — entry editing UI
 - `src/components/` — cards, dialogs, sidebar, project tree, and reusable UI pieces
 - `src/types/` — DTOs and TypeScript contract definitions
 
@@ -170,6 +176,10 @@ This frontend expects a backend service that provides endpoints compatible with 
 - `POST /projects/:projectId/containers`
 - `PATCH /containers/:containerId`
 - `DELETE /containers/:containerId`
+- `GET /containers/:containerId/entries`
+- `POST /containers/:containerId/entries`
+- `PATCH /entries/:entryId`
+- `DELETE /entries/:entryId`
 
 The app expects a success response shape like:
 
@@ -180,7 +190,7 @@ The app expects a success response shape like:
 }
 ```
 
-The backend should also support the DTO shapes defined in `src/types/dtos.ts`, including project status values like `IN_PROGRESS`, `COMPLETED`, and `ABANDONED`, plus container mood values such as `HAPPY`, `CALM`, `SAD`, `ANGRY`, `ANXIOUS`, `EXCITED`, `TIRED`, and `NEUTRAL`.
+The backend should also support the DTO shapes defined in `src/types/dtos.ts`, including project status values like `IN_PROGRESS`, `COMPLETED`, and `ABANDONED`; container types `JOURNAL` and `TECHNICAL_NOTE`; container mood values such as `HAPPY`, `CALM`, `SAD`, `ANGRY`, `ANXIOUS`, `EXCITED`, `TIRED`, and `NEUTRAL`; and entry title/content fields.
 
 ## Notes
 
