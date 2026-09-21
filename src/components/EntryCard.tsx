@@ -1,18 +1,32 @@
+import { useUpdateEntry } from "@/hooks/useEntryMutations"
 import type { EntryCardProps } from "@/types/EntryCard.types"
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 
-export default function EntryCard({ title, content }: EntryCardProps) {
+export default function EntryCard({ title, content, entryId }: EntryCardProps) {
+  const updateEditor = useUpdateEntry()
   const titleEditor = useEditor({
     extensions: [StarterKit],
     content: title,
     immediatelyRender: false,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML()
+      updateEditor.mutate({ newTitle: html, newContent: undefined, entryId })
+    },
   })
 
   const contentEditor = useEditor({
     extensions: [StarterKit],
     content,
     immediatelyRender: false,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML()
+      updateEditor.mutate({
+        newTitle: undefined,
+        newContent: html,
+        entryId,
+      })
+    },
   })
 
   if (!titleEditor || !contentEditor) return null

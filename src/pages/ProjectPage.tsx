@@ -1,22 +1,27 @@
 import { useState } from "react"
 import { SideBar } from "@/components/SideBar"
-import { useCreateContainer } from "@/hooks/useContainerMutations"
-import { Routes, useParams, Route } from "react-router-dom"
+import { Routes, Route, useMatch } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { UserButton } from "@clerk/react"
 import { Input } from "@/components/ui/input"
-import CreateContainer from "@/components/CreateContainer"
-import type { CreateContainerDTO } from "@/types/dtos"
 import ContainersWrapper from "@/components/RenderContainers"
 import RenderEntries from "@/components/RenderEntries"
+import { useCreateEntry } from "@/hooks/useEntryMutations"
 
 function ProjectPage() {
-  const { projectId } = useParams<{ projectId: string }>()
   const [sideBarOpen, setSideBarOpen] = useState(false)
-  const [newContainerMenuOpen, setNewContainerMenuOpen] = useState(false)
-  const createContainer = useCreateContainer(projectId!)
-
+  const [newMenuOpen, setNewMenuOpen] = useState(false)
+  const match = useMatch("/projects/:projectId/containers/:containerId")
+  const containerId = match?.params.containerId // string | undefined
+  const newEntityName = containerId ? "Entry" : "Container"
+  const createEntry = useCreateEntry(containerId!)
+  function handleNewBtnClick() {
+    if (!containerId) {
+      return () => setNewMenuOpen(true)
+    }
+    return () => createEntry.mutate({ title: "", content: "" })
+  }
   return (
     <>
       <SideBar open={sideBarOpen} onOpenChange={setSideBarOpen} />
@@ -29,27 +34,25 @@ function ProjectPage() {
               placeholder="Search Projects..."
             />
             <div className="flex flex-row items-center justify-between gap-8">
-              <Button onClick={() => setNewContainerMenuOpen(true)} size={"lg"}>
-                <Plus /> New Container
+              <Button onClick={handleNewBtnClick()} size={"lg"}>
+                <Plus /> New {newEntityName}
               </Button>
               <UserButton />
             </div>
           </header>
           <Routes>
-            <Route index element={<ContainersWrapper />} />
+            <Route
+              index
+              element={
+                <ContainersWrapper
+                  setNewContainerMenuOpen={setNewMenuOpen}
+                  newContainerMenuOpen={newMenuOpen}
+                />
+              }
+            />
             <Route path="containers/:containerId" element={<RenderEntries />} />
           </Routes>
         </div>
-
-        <CreateContainer
-          open={newContainerMenuOpen}
-          onOpenChange={setNewContainerMenuOpen}
-          onConfirm={(newContainerData: CreateContainerDTO) =>
-            createContainer.mutate(newContainerData, {
-              onSuccess: () => setNewContainerMenuOpen(false),
-            })
-          }
-        />
       </div>
     </>
   )

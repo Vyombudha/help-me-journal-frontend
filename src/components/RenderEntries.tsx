@@ -23,7 +23,12 @@ const RenderEntries = () => {
       <main className="m-8">
         {entries &&
           entries.map((e) => (
-            <EntryCard title={e.title} content={e.content} key={e.id} />
+            <EntryCard
+              title={e.title}
+              content={e.content}
+              key={e.id}
+              entryId={e.id}
+            />
           ))}
       </main>
     </div>

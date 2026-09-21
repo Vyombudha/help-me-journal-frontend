@@ -78,8 +78,8 @@ export interface CreateEntryDTO {
 }
 
 export interface UpdateEntryDTO {
-  newTitle: string
-  newContent: string
+  newTitle: string | undefined
+  newContent: string | undefined
 }
 export interface SuccessResponse<T> {
   success: true

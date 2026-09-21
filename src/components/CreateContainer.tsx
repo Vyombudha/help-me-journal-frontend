@@ -59,7 +59,7 @@ export default function CreateContainer({
         <form id="new-container-form" onSubmit={handleSubmission}>
           <FieldGroup>
             <Field>
-              <Label htmlFor="name-1">Title</Label>
+            <Label htmlFor="name-1">Title</Label>
               <Input id="name-1" name="name" defaultValue="Privacy Drive" />
             </Field>
             <Field>

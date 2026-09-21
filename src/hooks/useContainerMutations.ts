@@ -18,7 +18,7 @@ export function useCreateContainer(projectId: string) {
       return data.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["containers"] })
+      queryClient.invalidateQueries({ queryKey: ["containers", projectId] })
     },
   })
 }
@@ -30,14 +30,16 @@ export function useUpdateContainer() {
       containerId,
       ...updatedContainerData
     }: UpdateContainerDTO & { containerId: string }) => {
-      const { data } = await api.patch<SuccessResponse<UpdateContainerDTO>>(
+      const { data } = await api.patch<SuccessResponse<ContainerDTO>>(
         `/containers/${containerId}`,
         updatedContainerData
       )
       return data.data
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["containers"] })
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["containers", data.projectId],
+      })
     },
   })
 }
@@ -51,8 +53,10 @@ export function useDeleteContainer() {
       )
       return data.data
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["containers"] })
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["containers", data.projectId],
+      })
     },
   })
 }

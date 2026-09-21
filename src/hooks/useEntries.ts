@@ -4,12 +4,13 @@ import type { EntryDTO, SuccessResponse } from "@/types/dtos"
 
 export function useEntries(containerId: string) {
   return useQuery({
-    queryKey: ["entries"],
+    queryKey: ["entries", containerId],
     queryFn: async () => {
       const { data } = await api.get<SuccessResponse<EntryDTO[]>>(
         `/containers/${containerId}/entries`
       )
       return data.data
     },
+    enabled: !!containerId,
   })
 }

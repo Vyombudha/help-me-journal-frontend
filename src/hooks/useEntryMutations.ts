@@ -18,7 +18,7 @@ export function useCreateEntry(containerId: string) {
       return data.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entries"] })
+      queryClient.invalidateQueries({ queryKey: ["entries", containerId] })
     },
   })
 }
@@ -30,14 +30,14 @@ export function useUpdateEntry() {
       entryId,
       ...updatedContainerData
     }: UpdateEntryDTO & { entryId: string }) => {
-      const { data } = await api.patch<SuccessResponse<UpdateEntryDTO>>(
+      const { data } = await api.patch<SuccessResponse<EntryDTO>>(
         `/entries/${entryId}`,
         updatedContainerData
       )
       return data.data
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entries"] })
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["entries", data.containerId] })
     },
   })
 }
@@ -51,8 +51,8 @@ export function useDeleteEntries() {
       )
       return data.data
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entries"] })
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["entries", data.containerId] })
     },
   })
 }
