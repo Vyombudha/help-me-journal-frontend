@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import CreateContainer from "@/components/CreateContainer"
 import type { CreateContainerDTO } from "@/types/dtos"
 import ContainersWrapper from "@/components/RenderContainers"
+import RenderEntries from "@/components/RenderEntries"
 
 function ProjectPage() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -36,10 +37,7 @@ function ProjectPage() {
           </header>
           <Routes>
             <Route index element={<ContainersWrapper />} />
-            <Route
-              path="containers/:containerId"
-              element={<h1>Enter the Text Editor HAHA</h1>}
-            />
+            <Route path="containers/:containerId" element={<RenderEntries />} />
           </Routes>
         </div>
 
