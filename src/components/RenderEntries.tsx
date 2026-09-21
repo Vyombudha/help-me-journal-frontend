@@ -11,7 +11,7 @@ const RenderEntries = () => {
   const { data: entries } = useEntries(containerId!)
 
   return (
-    <div className="flex w-full flex-col gap-4 px-16 py-12">
+    <div className="flex h-full w-full flex-col gap-4">
       <header>
         {containers && (
           <ContainerHeading
@@ -20,7 +20,7 @@ const RenderEntries = () => {
           />
         )}
       </header>
-      <main className="m-8">
+      <main className="h-full w-full self-end">
         {entries &&
           entries.map((e) => (
             <EntryCard
@@ -45,7 +45,7 @@ function ContainerHeading({ title }: { title: string | undefined }) {
   if (!titleEditor) return null
 
   return (
-    <div className="m-8 flex max-w-2xl flex-col justify-between gap-8">
+    <div className="m-8 flex flex-col justify-between gap-8 sm:w-full lg:w-1/2">
       <EditorContent
         editor={titleEditor}
         className="min-h-72px max-w-full min-w-2/3 rounded-2xl border border-zinc-700 p-4 text-4xl transition-colors duration-150 focus-within:border-zinc-400 [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none [&_.ProseMirror]:focus-visible:outline-none"

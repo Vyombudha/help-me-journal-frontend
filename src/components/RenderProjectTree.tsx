@@ -1,4 +1,11 @@
-import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react"
+import {
+  BookAIcon,
+  ChevronRightIcon,
+  FileIcon,
+  HomeIcon,
+  LayoutDashboard,
+  Notebook,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,6 +19,12 @@ import type {
   RenderProjectTreeProps,
 } from "@/types/ProjectTreeTypes"
 import { useNavigate } from "react-router-dom"
+import type { ReactNode } from "react"
+
+const CollapsibleNameIconMap: Record<string, ReactNode> = {
+  Journals: <BookAIcon />,
+  Notes: <Notebook />,
+}
 
 export function RenderProjectTree({
   journals,
@@ -33,6 +46,10 @@ export function RenderProjectTree({
         },
       ],
     },
+    {
+      name: "HomePage",
+      path: "/",
+    },
   ]
 
   const renderItem = (fileItem: FileTreeItem) => {
@@ -47,7 +64,7 @@ export function RenderProjectTree({
                 className="group w-full justify-start transition-none hover:bg-accent hover:text-accent-foreground"
               >
                 <ChevronRightIcon className="transition-transform group-data-[state=open]:rotate-90" />
-                <FolderIcon />
+                {CollapsibleNameIconMap[fileItem.name] ?? <LayoutDashboard />}
                 {fileItem.name}
               </Button>
             }
@@ -65,10 +82,10 @@ export function RenderProjectTree({
         key={fileItem.name}
         variant="link"
         size="default"
-        className="w-full justify-start gap-2 text-foreground"
+        className="w-full justify-start gap-2 truncate overflow-hidden text-foreground"
         onClick={() => navigate(`/${fileItem.path}`)}
       >
-        <FileIcon />
+        {fileItem.name === "HomePage" ? <HomeIcon /> : <FileIcon />}
         <span>{fileItem.name}</span>
       </Button>
     )
