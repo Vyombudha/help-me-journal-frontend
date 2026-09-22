@@ -2,7 +2,7 @@
 
 A React + TypeScript frontend for managing projects, journal-like containers, and personal reflection entries. The app is currently structured as a working MVP: signed-in users can create projects, open a project workspace, create containers, and manage entries with Clerk-authenticated requests to a backend API.
 
-[Live app]: https://help-me-journal.onrender.com
+Live app: https://help-me-journal.onrender.com
 
 ## Current project status
 
