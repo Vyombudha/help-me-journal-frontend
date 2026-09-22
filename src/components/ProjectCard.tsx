@@ -23,6 +23,7 @@ import type { UpdateProjectDTO } from "@/types/dtos"
 import { Separator } from "./ui/separator"
 import { Link } from "react-router-dom"
 import { Button } from "./ui/button"
+import { toast } from "./ui/toast"
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -56,10 +57,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         onConfirm={() => {
-          deleteProject.mutate(project.id, {
-            onSuccess: () => {
-              setDeleteOpen(false)
-            },
+          setDeleteOpen(false)
+          toast.promise(deleteProject.mutateAsync(project.id), {
+            loading: `Deleting Project`,
+            success: `Project Deleted`,
+            error: `Failed to Delete Project`,
           })
         }}
       />
@@ -67,14 +69,20 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <EditProject
         open={editProjectMenuOpen}
         onOpenChange={setEditProjectMenuOpen}
-        onConfirm={(updatedProjectData: UpdateProjectDTO) =>
-          updateProject.mutate(
-            { id: project.id, ...updatedProjectData },
+        onConfirm={(updatedProjectData: UpdateProjectDTO) => {
+          setEditProjectMenuOpen(false)
+          toast.promise(
+            updateProject.mutateAsync({
+              id: project.id,
+              ...updatedProjectData,
+            }),
             {
-              onSuccess: () => setEditProjectMenuOpen(false),
+              loading: `Updating Project`,
+              success: `Project Updated`,
+              error: `Failed to Update Project`,
             }
           )
-        }
+        }}
       />
     </div>
   )

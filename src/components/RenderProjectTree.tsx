@@ -34,6 +34,10 @@ export function RenderProjectTree({
   const navigate = useNavigate()
   const fileTree: FileTreeItem[] = [
     {
+      name: "HomePage",
+      path: "/",
+    },
+    {
       name: projectName,
       items: [
         {
@@ -45,10 +49,6 @@ export function RenderProjectTree({
           items: notes,
         },
       ],
-    },
-    {
-      name: "HomePage",
-      path: "/",
     },
   ]
 

@@ -1,9 +1,11 @@
 import { useEntries } from "@/hooks/useEntries"
 import EntryCard from "./EntryCard"
-import { useEditor, EditorContent } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
+
 import { useParams } from "react-router-dom"
 import { useContainers } from "@/hooks/useContainers"
+import { useUpdateContainer } from "@/hooks/useContainerMutations"
+import { useDebouncedCallback } from "use-debounce"
+import { useState } from "react"
 const RenderEntries = () => {
   const { containerId } = useParams<{ containerId: string }>()
   const { projectId } = useParams<{ projectId: string }>()
@@ -15,6 +17,7 @@ const RenderEntries = () => {
       <header>
         {containers && (
           <ContainerHeading
+            containerId={containerId!}
             key={containerId}
             title={containers.find((c) => c.id === containerId)?.title}
           />
@@ -35,20 +38,34 @@ const RenderEntries = () => {
   )
 }
 
-function ContainerHeading({ title }: { title: string | undefined }) {
-  const titleEditor = useEditor({
-    extensions: [StarterKit],
-    content: title ?? "Title",
-    immediatelyRender: false,
-  })
-
-  if (!titleEditor) return null
+function ContainerHeading({
+  title,
+  containerId,
+}: {
+  title: string | undefined
+  containerId: string
+}) {
+  const updateContainer = useUpdateContainer()
+  const [value, setValue] = useState(title ?? "Title")
+  const debouncedSave = useDebouncedCallback((newTitle: string) => {
+    updateContainer.mutate({
+      newTitle,
+      containerId,
+      newMoods: undefined,
+    })
+  }, 600)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setValue(newValue)
+    debouncedSave(newValue)
+  }
 
   return (
     <div className="m-8 flex flex-col justify-between gap-8 sm:w-full lg:w-1/2">
-      <EditorContent
-        editor={titleEditor}
-        className="min-h-72px max-w-full min-w-2/3 rounded-2xl border border-zinc-700 p-4 text-4xl transition-colors duration-150 focus-within:border-zinc-400 [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none [&_.ProseMirror]:focus-visible:outline-none"
+      <input
+        value={value}
+        onChange={handleChange}
+        className="min-h-72px max-w-full min-w-2/3 rounded-2xl border border-zinc-700 bg-transparent p-4 text-4xl transition-colors duration-150 outline-none focus:border-zinc-400"
       />
     </div>
   )

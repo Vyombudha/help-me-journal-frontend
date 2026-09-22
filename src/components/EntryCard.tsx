@@ -2,16 +2,26 @@ import { useUpdateEntry } from "@/hooks/useEntryMutations"
 import type { EntryCardProps } from "@/types/EntryCard.types"
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-
+import { useDebouncedCallback } from "use-debounce"
 export default function EntryCard({ title, content, entryId }: EntryCardProps) {
   const updateEditor = useUpdateEntry()
+  const debouncedSave = useDebouncedCallback(
+    (newTitle?: string, newContent?: string) => {
+      updateEditor.mutate({
+        newTitle,
+        newContent,
+        entryId,
+      })
+    },
+    600
+  )
   const titleEditor = useEditor({
     extensions: [StarterKit],
     content: title,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
-      updateEditor.mutate({ newTitle: html, newContent: undefined, entryId })
+      debouncedSave(html, undefined)
     },
   })
 
@@ -21,11 +31,7 @@ export default function EntryCard({ title, content, entryId }: EntryCardProps) {
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
-      updateEditor.mutate({
-        newTitle: undefined,
-        newContent: html,
-        entryId,
-      })
+      debouncedSave(undefined, html)
     },
   })
 

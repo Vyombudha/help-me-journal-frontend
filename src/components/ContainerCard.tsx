@@ -26,6 +26,7 @@ import {
   useUpdateContainer,
 } from "@/hooks/useContainerMutations"
 import EditContainer from "./EditContainer"
+import { toast } from "./ui/toast"
 
 export function ContainerCard({ container }: ContainerCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -59,10 +60,13 @@ export function ContainerCard({ container }: ContainerCardProps) {
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         onConfirm={() => {
-          deleteContainer.mutate(container.id, {
-            onSuccess: () => {
-              setDeleteOpen(false)
-            },
+          setEditProjectMenuOpen(false)
+          const containerType =
+            container.type === "JOURNAL" ? "Journal" : "Note"
+          toast.promise(deleteContainer.mutateAsync(container.id), {
+            loading: `Deleting ${containerType}`,
+            success: `${containerType} Deleted`,
+            error: `Failed to Delete ${containerType}`,
           })
         }}
       />
@@ -70,14 +74,22 @@ export function ContainerCard({ container }: ContainerCardProps) {
       <EditContainer
         open={editProjectMenuOpen}
         onOpenChange={setEditProjectMenuOpen}
-        onConfirm={(updatedContainerData: UpdateContainerDTO) =>
-          updateContainer.mutate(
-            { containerId: container.id, ...updatedContainerData },
+        onConfirm={(updatedContainerData: UpdateContainerDTO) => {
+          setEditProjectMenuOpen(false)
+          const containerType =
+            container.type === "JOURNAL" ? "Journal" : "Note"
+          toast.promise(
+            updateContainer.mutateAsync({
+              containerId: container.id,
+              ...updatedContainerData,
+            }),
             {
-              onSuccess: () => setEditProjectMenuOpen(false),
+              loading: `Creating ${containerType}`,
+              success: `${containerType} Created`,
+              error: `Failed to Create ${containerType}`,
             }
           )
-        }
+        }}
       />
     </div>
   )

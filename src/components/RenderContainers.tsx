@@ -6,6 +6,7 @@ import { type Dispatch, type SetStateAction } from "react"
 import { useCreateContainer } from "@/hooks/useContainerMutations"
 import CreateContainer from "./CreateContainer"
 import type { CreateContainerDTO } from "@/types/dtos"
+import { toast } from "@/components/ui/toast"
 
 export default function ContainersWrapper({
   setNewContainerMenuOpen,
@@ -49,11 +50,15 @@ function RenderContainers({
       <CreateContainer
         open={newContainerMenuOpen}
         onOpenChange={setNewContainerMenuOpen}
-        onConfirm={(newContainerData: CreateContainerDTO) =>
-          createContainer.mutate(newContainerData, {
-            onSuccess: () => setNewContainerMenuOpen(false),
+        onConfirm={(newContainerData: CreateContainerDTO) => {
+          const containerType =
+            newContainerData.type === "JOURNAL" ? "Journal" : "Note;"
+          toast.promise(createContainer.mutateAsync(newContainerData), {
+            loading: `Creating ${containerType}`,
+            success: `${containerType} Created`,
+            error: `Failed to Create ${containerType}`,
           })
-        }
+        }}
       />
     </>
   )

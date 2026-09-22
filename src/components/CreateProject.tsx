@@ -12,7 +12,6 @@ import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { CreateProjectProps } from "@/types/CreateProject.types"
-
 export default function CreateProject({
   open,
   onOpenChange,
