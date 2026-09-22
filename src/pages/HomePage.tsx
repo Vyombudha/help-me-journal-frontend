@@ -29,7 +29,7 @@ export default function HomePage() {
           />
         </header>
 
-        <main className="min:grid-cols-1 grid flex-1 scrollbar-none content-start gap-8 overflow-y-auto px-4 py-8 md:grid-cols-2 lg:grid-cols-4">
+        <main className="grid flex-1 scrollbar-none grid-cols-1 content-start gap-8 overflow-y-auto px-4 py-8 md:grid-cols-2 lg:grid-cols-4">
           <RenderProjects />
         </main>
       </div>
