@@ -12,6 +12,8 @@ export default function HomePage() {
   const [newProjectMenuOpen, setNewProjectMenuOpen] = useState(false)
   const createProject = useCreateProject()
 
+  const [search, setSearch] = useState("")
+
   return (
     <div className="flex h-full w-full items-center justify-center">
       <div className="flex h-full w-full flex-col rounded-3xl bg-background p-8">
@@ -26,11 +28,12 @@ export default function HomePage() {
             className="h-full w-full md:w-1/3 lg:w-1/3"
             type="search"
             placeholder="Search Projects..."
+            onChange={(e) => setSearch(e.target.value)}
           />
         </header>
 
         <main className="grid flex-1 scrollbar-none grid-cols-1 content-start gap-8 overflow-y-auto px-4 py-8 md:grid-cols-2 lg:grid-cols-4">
-          <RenderProjects />
+          <RenderProjects search={search.toLowerCase()} />
         </main>
       </div>
 

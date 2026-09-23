@@ -16,6 +16,8 @@ function ProjectPage() {
   const containerId = match?.params.containerId // string | undefined
   const newEntityName = containerId ? "Entry" : "Container"
   const createEntry = useCreateEntry(containerId!)
+  const [search, setSearch] = useState("")
+
   function handleNewBtnClick() {
     if (!containerId) {
       return () => setNewMenuOpen(true)
@@ -37,6 +39,7 @@ function ProjectPage() {
             <Input
               className="h-full w-full md:w-1/3 lg:w-1/3"
               type="search"
+              onChange={(e) => setSearch(e.target.value.toLowerCase())}
               placeholder="Search Journals/Notes..."
             />
           </header>
@@ -45,6 +48,7 @@ function ProjectPage() {
               index
               element={
                 <ContainersWrapper
+                  search={search}
                   setNewContainerMenuOpen={setNewMenuOpen}
                   newContainerMenuOpen={newMenuOpen}
                 />

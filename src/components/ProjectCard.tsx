@@ -98,6 +98,7 @@ function InfoCard({ project }: ProjectCardProps) {
         <CardTitle>{project.name}</CardTitle>
         <CardDescription>{project.description}</CardDescription>
       </CardHeader>
+
       <CardFooter>
         <Link to={`/projects/${project.id}`} className="w-full">
           <Button>View Project</Button>

@@ -105,6 +105,7 @@ function InfoCard({ container }: ContainerCardProps) {
         <CardTitle>{container.title}</CardTitle>
         <CardDescription>{container.moods}</CardDescription>
       </CardHeader>
+
       <CardFooter>
         <Link to={`containers/${container.id}`} className="w-full">
           <Button>

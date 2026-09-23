@@ -9,15 +9,18 @@ import type { CreateContainerDTO } from "@/types/dtos"
 import { toast } from "@/components/ui/toast"
 
 export default function ContainersWrapper({
+  search,
   setNewContainerMenuOpen,
   newContainerMenuOpen,
 }: {
   setNewContainerMenuOpen: Dispatch<SetStateAction<boolean>>
   newContainerMenuOpen: boolean
+  search: string
 }) {
   return (
     <main className="min:grid-cols-1 grid flex-1 scrollbar-none content-start gap-16 overflow-y-auto px-4 py-8 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4">
       <RenderContainers
+        search={search}
         setNewContainerMenuOpen={setNewContainerMenuOpen}
         newContainerMenuOpen={newContainerMenuOpen}
       />
@@ -28,9 +31,11 @@ export default function ContainersWrapper({
 function RenderContainers({
   setNewContainerMenuOpen,
   newContainerMenuOpen,
+  search,
 }: {
   setNewContainerMenuOpen: Dispatch<SetStateAction<boolean>>
   newContainerMenuOpen: boolean
+  search: string
 }) {
   const { projectId } = useParams<{ projectId: string }>()
   const createContainer = useCreateContainer(projectId!)
@@ -43,9 +48,15 @@ function RenderContainers({
       )}
       {isLoading && <h1>Loading...</h1>}
       {containers &&
-        containers.map((container) => (
-          <ContainerCard container={container} key={container.id} />
-        ))}
+        containers
+          .filter(
+            (c) =>
+              c.title.toLowerCase().includes(search) ||
+              c.moods.toString().includes(search)
+          )
+          .map((container) => (
+            <ContainerCard container={container} key={container.id} />
+          ))}
 
       <CreateContainer
         open={newContainerMenuOpen}
