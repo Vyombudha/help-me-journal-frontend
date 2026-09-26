@@ -6,26 +6,28 @@ Live app: https://help-me-journal.onrender.com
 
 ## Current project status
 
-This frontend is in active MVP/development stage. The current implementation includes:
+This frontend is currently in the MVP stage and is under active development. The core journaling workflow is functional, including:
 
 - Clerk sign-in flow with signed-out landing page
 - project dashboard for browsing and creating projects
+- search for projects and containers by name
 - project-level workspace with sidebar navigation
 - container management inside a project
 - entry creation and editing within a selected container
 - React Query data synchronization for project/container/entry operations
 - authenticated API requests using a Clerk bearer token
 
-It is functional for the core journaling workflow, but it is not a finished product and still depends on a compatible backend API and alot of UX and functional refinements.
+The core workflow is usable, but this is not yet a finished product. It depends on a compatible backend API and still needs UX polish, broader validation, and additional functional refinements before it is production-ready.
 
 ## Core workflow
 
 1. A user signs in with Clerk.
 2. The dashboard loads the current project list from the backend.
 3. The user creates a project or opens an existing one.
-4. Inside the project, they create containers such as journal entries or technical notes.
-5. A selected container shows its entries and allows creation or editing.
-6. Data is fetched and invalidated through TanStack Query so UI state stays aligned with the backend.
+4. The user can search projects and containers by name.
+5. Inside the project, they create containers such as journal entries or technical notes.
+6. A selected container shows its entries and allows creation or editing.
+7. Data is fetched and invalidated through TanStack Query so UI state stays aligned with the backend.
 
 ## Tech stack
 
