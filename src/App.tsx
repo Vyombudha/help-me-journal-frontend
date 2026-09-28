@@ -17,6 +17,7 @@ export function App() {
           <Route path="/projects/:projectId/*" element={<ProjectPage />} />
         </Routes>
       </Show>
+
     </div>
   )
 }
