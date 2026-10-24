@@ -1,51 +1,68 @@
+import { useEffect, useState } from "react"
 import { useUpdateEntry } from "@/hooks/useEntryMutations"
 import type { EntryCardProps } from "@/types/EntryCard.types"
-import { useEditor, EditorContent } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
 import { useDebouncedCallback } from "use-debounce"
+
+import "@blocknote/core/fonts/inter.css"
+import { useCreateBlockNote } from "@blocknote/react"
+import { BlockNoteView } from "@blocknote/shadcn"
+import "@blocknote/shadcn/style.css"
+
+// old titles were saved as HTML like "<p>My title</p>"
+const stripHtml = (s: string) =>
+  new DOMParser().parseFromString(s ?? "", "text/html").body.textContent ?? ""
+
 export default function EntryCard({ title, content, entryId }: EntryCardProps) {
-  const updateEditor = useUpdateEntry()
+  const updateEntry = useUpdateEntry()
+  const [titleText, setTitleText] = useState(() => stripHtml(title))
+  const editor = useCreateBlockNote()
+
   const debouncedSave = useDebouncedCallback(
     (newTitle?: string, newContent?: string) => {
-      updateEditor.mutate({
-        newTitle,
-        newContent,
-        entryId,
-      })
+      updateEntry.mutate({ newTitle, newContent, entryId })
     },
     600
   )
-  const titleEditor = useEditor({
-    extensions: [StarterKit],
-    content: title,
-    immediatelyRender: false,
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML()
-      debouncedSave(html, undefined)
-    },
-  })
 
-  const contentEditor = useEditor({
-    extensions: [StarterKit],
-    content,
-    immediatelyRender: false,
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML()
-      debouncedSave(undefined, html)
-    },
-  })
-
-  if (!titleEditor || !contentEditor) return null
+  // Load saved content once: new format is JSON blocks, old entries are HTML
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      if (!content) return
+      try {
+        const parsed = JSON.parse(content)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          editor.replaceBlocks(editor.document, parsed)
+        }
+      } catch {
+        const blocks = await editor.tryParseHTMLToBlocks(content)
+        if (!cancelled) editor.replaceBlocks(editor.document, blocks)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+    // intentionally not depending on `content`, or saves would reload the editor mid-typing
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, entryId])
 
   return (
-    <div className="m-8 flex flex-col justify-between gap-8 sm:w-full lg:w-2/3">
-      <EditorContent
-        editor={titleEditor}
-        className="scrollbar-none overflow-y-auto rounded-2xl border border-zinc-700 p-4 text-2xl transition-colors duration-150 focus-within:border-zinc-400 sm:w-full lg:w-1/2 [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none [&_.ProseMirror]:focus-visible:outline-none"
+    <div className="mx-auto w-full max-w-3xl px-6 py-12">
+      <input
+        value={titleText}
+        onChange={(e) => {
+          setTitleText(e.target.value)
+          debouncedSave(e.target.value, undefined)
+        }}
+        placeholder="Untitled"
+        className="mb-6 w-full bg-transparent text-4xl font-bold outline-none placeholder:text-zinc-600"
       />
-      <EditorContent
-        editor={contentEditor}
-        className="min-h-70 max-w-full rounded-2xl border border-zinc-700 p-4 text-2xl transition-colors duration-150 focus-within:border-zinc-400 [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none [&_.ProseMirror]:focus-visible:outline-none"
+      <BlockNoteView
+        editor={editor}
+        onChange={() =>
+          debouncedSave(undefined, JSON.stringify(editor.document))
+        }
       />
     </div>
   )

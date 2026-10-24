@@ -22,7 +22,7 @@ export default function CreateProject({
     const formData = new FormData(e.currentTarget)
     const name = formData.get("name") as string
     const description = formData.get("description") as string
-
+ 
     onConfirm({ name, description })
     onOpenChange(false) // close the dialog after confirming
   }
@@ -42,14 +42,14 @@ export default function CreateProject({
           <FieldGroup>
             <Field>
               <Label htmlFor="name-1">Name</Label>
-              <Input id="name-1" name="name" defaultValue="Privacy Drive" />
+              <Input id="name-1" name="name" placeholder="Privacy Drive" />
             </Field>
             <Field>
               <Label htmlFor="description-1">Description</Label>
               <Input
                 id="description-1"
                 name="description"
-                defaultValue="A clone of google drive made in go lang"
+                placeholder="A clone of google drive made in go lang"
               />
             </Field>
           </FieldGroup>
