@@ -74,8 +74,8 @@ export default function LandingPage() {
         </div>
         <div className="rounded-3xl bg-secondary/40 p-8">
           <img
-            src="/journal_illustration.svg"
-            alt=""
+            src={`${import.meta.env.BASE_URL}journal_illustration.svg`}
+            alt="Journal illustration"
             className="mx-auto w-full max-w-sm"
           />
         </div>
