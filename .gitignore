@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+github_actions_vps*
+*.pem
+id_ed25519*
