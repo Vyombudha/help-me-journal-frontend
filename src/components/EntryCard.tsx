@@ -8,13 +8,12 @@ import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/shadcn"
 import "@blocknote/shadcn/style.css"
 
-// old titles were saved as HTML like "<p>My title</p>"
 const stripHtml = (s: string) =>
   new DOMParser().parseFromString(s ?? "", "text/html").body.textContent ?? ""
 
 export default function EntryCard({ title, content, entryId }: EntryCardProps) {
   const updateEntry = useUpdateEntry()
-  const [titleText, setTitleText] = useState(() => stripHtml(title))
+  const [titleText, setTitleText] = useState(() => stripHtml(title ?? ""))
   const editor = useCreateBlockNote()
 
   const debouncedSave = useDebouncedCallback(

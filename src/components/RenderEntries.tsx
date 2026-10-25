@@ -46,7 +46,8 @@ function ContainerHeading({
   containerId: string
 }) {
   const updateContainer = useUpdateContainer()
-  const [value, setValue] = useState(title ?? "Title")
+  const [value, setValue] = useState(title ?? "")
+
   const debouncedSave = useDebouncedCallback((newTitle: string) => {
     updateContainer.mutate({
       newTitle,
