@@ -15,7 +15,7 @@ export function useApiAuth() {
     })
 
     // cleanup on unmount to avoid stacking interceptors on hot reload
-    return () => {
+    return () => {  
       api.interceptors.request.eject(interceptorId)
     }
   }, [getToken])

@@ -15,11 +15,9 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { useState } from "react"
-import { Trash2, Pencil } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import ConfirmDelete from "./ConfirmDelete"
-import { useDeleteProject, useUpdateProject } from "@/hooks/useProjectMutations"
-import EditProject from "./EditProject"
-import type { UpdateProjectDTO } from "@/types/dtos"
+import { useDeleteProject } from "@/hooks/useProjectMutations"
 import { Separator } from "./ui/separator"
 import { Link } from "react-router-dom"
 import { Button } from "./ui/button"
@@ -27,9 +25,7 @@ import { toast } from "./ui/toast"
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const [editProjectMenuOpen, setEditProjectMenuOpen] = useState(false)
   const deleteProject = useDeleteProject()
-  const updateProject = useUpdateProject()
 
   return (
     <div className="w-full">
@@ -38,10 +34,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <InfoCard project={project} />
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem onClick={() => setEditProjectMenuOpen(true)}>
-            <Pencil size={20} />
-            Edit
-          </ContextMenuItem>
           <Separator />
           <ContextMenuItem
             variant="destructive"
@@ -63,25 +55,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
             success: `Project Deleted`,
             error: `Failed to Delete Project`,
           })
-        }}
-      />
-
-      <EditProject
-        open={editProjectMenuOpen}
-        onOpenChange={setEditProjectMenuOpen}
-        onConfirm={(updatedProjectData: UpdateProjectDTO) => {
-          setEditProjectMenuOpen(false)
-          toast.promise(
-            updateProject.mutateAsync({
-              id: project.id,
-              ...updatedProjectData,
-            }),
-            {
-              loading: `Updating Project`,
-              success: `Project Updated`,
-              error: `Failed to Update Project`,
-            }
-          )
         }}
       />
     </div>

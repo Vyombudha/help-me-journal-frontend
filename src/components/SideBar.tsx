@@ -12,6 +12,7 @@ import { useContainers } from "@/hooks/useContainers"
 import { useParams } from "react-router-dom"
 import type { FileTreeItem } from "@/types/ProjectTreeTypes"
 import { useProjects } from "@/hooks/useProjects"
+import { getTitleText } from "@/lib/utils"
 
 export function SideBar({ open, onOpenChange }: SideBarProps) {
   const { projectId } = useParams<{ projectId: string }>()
@@ -28,7 +29,7 @@ export function SideBar({ open, onOpenChange }: SideBarProps) {
             </Button>
           }
         />
-        <DropdownMenuContent className="h-[calc(100vh-12rem)] w-64 overflow-y-auto p-0">  
+        <DropdownMenuContent className="h-[calc(100vh-12rem)] w-64 overflow-y-auto p-0">
           {containers && projects && (
             <RenderProjectTree
               projectName={
@@ -38,7 +39,7 @@ export function SideBar({ open, onOpenChange }: SideBarProps) {
                 .filter((c) => c.type === "TECHNICAL_NOTE")
                 .map((c) => {
                   const note: FileTreeItem = {
-                    name: c.title,
+                    name: getTitleText(c.title),
                     path: `projects/${projectId}/containers/${c.id}`,
                   }
                   return note
@@ -48,7 +49,7 @@ export function SideBar({ open, onOpenChange }: SideBarProps) {
                 .filter((j) => j.type === "JOURNAL")
                 .map((j) => {
                   const journal: FileTreeItem = {
-                    name: j.title,
+                    name: getTitleText(j.title),
                     path: `projects/${projectId}/containers/${j.id}`,
                   }
                   return journal

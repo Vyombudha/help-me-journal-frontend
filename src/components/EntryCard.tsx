@@ -16,6 +16,7 @@ import * as Select from "@/components/ui/select"
 import * as Tabs from "@/components/ui/tabs"
 import * as Toggle from "@/components/ui/toggle"
 import * as Tooltip from "@/components/ui/tooltip"
+import type { EntryCardProps } from "@/types/EntryCard.types"
 
 function parseContent(content: string | undefined): PartialBlock[] | undefined {
   if (!content) return undefined
@@ -27,17 +28,12 @@ function parseContent(content: string | undefined): PartialBlock[] | undefined {
   }
 }
 
-export function EntryCard({
-  containerId,
-  content,
-}: {
-  containerId: string
-  content: string | undefined
-}) {
+export function EntryCard({ containerId, content }: EntryCardProps) {
   const save = useUpdateContainerContent()
   const editor = useCreateBlockNote({ initialContent: parseContent(content) })
 
   const debouncedSave = useDebouncedCallback((blocks: Block[]) => {
+    console.log(blocks)
     save.mutate({ containerId, newContent: JSON.stringify(blocks) })
   }, 800)
 

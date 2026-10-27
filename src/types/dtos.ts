@@ -73,7 +73,8 @@ export interface UpdateContainerTitleDTO {
 }
 
 export interface UpdateContainerContentDTO {
-  newContent: string
+  newContent?: string
+  newTitle?: string
 }
 
 export interface SuccessResponse<T> {

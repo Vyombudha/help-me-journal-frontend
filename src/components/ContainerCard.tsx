@@ -14,25 +14,17 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { useState } from "react"
-import { Trash2, Pencil } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import ConfirmDelete from "./ConfirmDelete"
-import type { UpdateContainerTitleDTO } from "@/types/dtos"
-import { Separator } from "./ui/separator"
 import { Link } from "react-router-dom"
 import { Button } from "./ui/button"
 import type { ContainerCardProps } from "@/types/ContainerCard.types"
-import {
-  useDeleteContainer,
-  useUpdateContainerTitle,
-} from "@/hooks/useContainerMutations"
-import EditContainer from "./EditContainer"
+import { useDeleteContainer } from "@/hooks/useContainerMutations"
 import { toast } from "./ui/toast"
 
 export function ContainerCard({ container }: ContainerCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const [editProjectMenuOpen, setEditProjectMenuOpen] = useState(false)
   const deleteContainer = useDeleteContainer()
-  const updateContainer = useUpdateContainerTitle()
 
   return (
     <div className="h-full w-full">
@@ -41,11 +33,6 @@ export function ContainerCard({ container }: ContainerCardProps) {
           <InfoCard container={container} />
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem onClick={() => setEditProjectMenuOpen(true)}>
-            <Pencil size={20} />
-            Edit
-          </ContextMenuItem>
-          <Separator />
           <ContextMenuItem
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
@@ -60,7 +47,6 @@ export function ContainerCard({ container }: ContainerCardProps) {
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         onConfirm={() => {
-          setEditProjectMenuOpen(false)
           const containerType =
             container.type === "JOURNAL" ? "Journal" : "Note"
           toast.promise(deleteContainer.mutateAsync(container.id), {
@@ -68,27 +54,6 @@ export function ContainerCard({ container }: ContainerCardProps) {
             success: `${containerType} Deleted`,
             error: `Failed to Delete ${containerType}`,
           })
-        }}
-      />
-
-      <EditContainer
-        open={editProjectMenuOpen}
-        onOpenChange={setEditProjectMenuOpen}
-        onConfirm={(updatedContainerData: UpdateContainerTitleDTO) => {
-          setEditProjectMenuOpen(false)
-          const containerType =
-            container.type === "JOURNAL" ? "Journal" : "Note"
-          toast.promise(
-            updateContainer.mutateAsync({
-              containerId: container.id,
-              ...updatedContainerData,
-            }),
-            {
-              loading: `Creating ${containerType}`,
-              success: `${containerType} Created`,
-              error: `Failed to Create ${containerType}`,
-            }
-          )
         }}
       />
     </div>
@@ -106,7 +71,7 @@ function InfoCard({ container }: ContainerCardProps) {
         <CardDescription>{container.moods}</CardDescription>
       </CardHeader>
 
-      <CardFooter>  
+      <CardFooter>
         <Link to={`containers/${container.id}`} className="w-full">
           <Button>
             View {container.type === "JOURNAL" ? "Journal" : "Note"}

@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom"
 import { UserButton } from "@clerk/react"
 import { Input } from "@/components/ui/input"
 import ContainersWrapper from "@/components/RenderContainers"
-import RenderEntries from "@/components/RenderEntries"
+import RenderContainerData from "@/components/RenderContainerData"
 
 function ProjectPage() {
   const [sideBarOpen, setSideBarOpen] = useState(false)
@@ -38,7 +38,10 @@ function ProjectPage() {
                 />
               }
             />
-            <Route path="containers/:containerId" element={<RenderEntries />} />
+            <Route
+              path="containers/:containerId"
+              element={<RenderContainerData />}
+            />
           </Routes>
         </div>
       </div>
