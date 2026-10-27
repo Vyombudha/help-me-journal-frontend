@@ -1,7 +1,7 @@
-import type { UpdateContainerDTO } from "./dtos"
+import type { UpdateContainerTitleDTO } from "./dtos"
 
 export type UpdateContainerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: (newContainerData: UpdateContainerDTO) => void
+  onConfirm: (newContainerData: UpdateContainerTitleDTO) => void
 }

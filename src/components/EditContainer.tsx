@@ -22,7 +22,7 @@ export default function EditContainer({
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const newTitle = formData.get("name") as string
-    onConfirm({ newTitle, newMoods: undefined })
+    onConfirm({ newTitle })
     onOpenChange(false) // close the dialog after confirming
   }
 
