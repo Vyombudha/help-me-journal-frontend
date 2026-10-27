@@ -31,6 +31,7 @@ export interface ProjectDTO {
 export interface ContainerDTO {
   id: string
   title: string
+  content: string
   projectId: string
   type: ContainerType
   templateConfig: Record<string, unknown> | null
@@ -67,20 +68,14 @@ export interface CreateContainerDTO {
   moods: Mood[]
 }
 
-export interface UpdateContainerDTO {
+export interface UpdateContainerTitleDTO {
   newTitle: string
-  newMoods: Mood[] | undefined
 }
 
-export interface CreateEntryDTO {
-  title: string
-  content: string
+export interface UpdateContainerContentDTO {
+  newContent: string
 }
 
-export interface UpdateEntryDTO {
-  newTitle: string | undefined
-  newContent: string | undefined
-}
 export interface SuccessResponse<T> {
   success: true
   data: T

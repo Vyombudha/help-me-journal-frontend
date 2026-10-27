@@ -1,16 +1,14 @@
-import { useEntries } from "@/hooks/useEntries"
-import EntryCard from "./EntryCard"
-
 import { useParams } from "react-router-dom"
 import { useContainers } from "@/hooks/useContainers"
-import { useUpdateContainer } from "@/hooks/useContainerMutations"
+import { useUpdateContainerTitle } from "@/hooks/useContainerMutations"
 import { useDebouncedCallback } from "use-debounce"
 import { useState } from "react"
+import { EntryCard } from "./EntryCard"
+
 const RenderEntries = () => {
   const { containerId } = useParams<{ containerId: string }>()
   const { projectId } = useParams<{ projectId: string }>()
   const { data: containers } = useContainers(projectId!)
-  const { data: entries } = useEntries(containerId!)
 
   return (
     <div className="flex h-full w-full flex-col gap-4">
@@ -24,15 +22,10 @@ const RenderEntries = () => {
         )}
       </header>
       <main className="h-full w-full self-end">
-        {entries &&
-          entries.map((e) => (
-            <EntryCard
-              title={e.title}
-              content={e.content}
-              key={e.id}
-              entryId={e.id}
-            />
-          ))}
+        <EntryCard
+          containerId={containerId!}
+          content={containers?.find((c) => c.id === containerId)?.content}
+        />
       </main>
     </div>
   )
@@ -45,14 +38,13 @@ function ContainerHeading({
   title: string | undefined
   containerId: string
 }) {
-  const updateContainer = useUpdateContainer()
+  const updateContainer = useUpdateContainerTitle()
   const [value, setValue] = useState(title ?? "")
 
   const debouncedSave = useDebouncedCallback((newTitle: string) => {
     updateContainer.mutate({
       newTitle,
       containerId,
-      newMoods: undefined,
     })
   }, 600)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

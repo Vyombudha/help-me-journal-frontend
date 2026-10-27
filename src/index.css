@@ -2,7 +2,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+/* stylelint-disable at-rule-no-unknown */
 @source "../node_modules/@blocknote/shadcn";
+/* stylelint-enable at-rule-no-unknown */
 @custom-variant dark (&:is(.dark *));
 @theme inline {
   --font-heading: var(--font-sans);
@@ -178,4 +180,28 @@ body,
   html {
     @apply font-sans;
   }
+}
+
+html .bn-container[data-color-scheme],
+html .bn-container.bn-shadcn {
+  --bn-colors-editor-background: var(--background);
+  --bn-colors-editor-text: var(--foreground);
+  --bn-colors-menu-background: var(--popover);
+  --bn-colors-menu-text: var(--popover-foreground);
+  --bn-colors-tooltip-background: var(--popover);
+  --bn-colors-tooltip-text: var(--popover-foreground);
+  --bn-colors-hovered-background: var(--accent);
+  --bn-colors-hovered-text: var(--accent-foreground);
+  --bn-colors-selected-background: var(--primary);
+  --bn-colors-selected-text: var(--primary-foreground);
+  --bn-colors-disabled-background: var(--muted);
+  --bn-colors-disabled-text: var(--muted-foreground);
+  --bn-colors-border: var(--border);
+  --bn-colors-shadow: var(--border);
+  --bn-colors-side-menu: var(--muted-foreground);
+}
+
+html .bn-container .bn-editor {
+  background-color: var(--background);
+  color: var(--foreground);
 }

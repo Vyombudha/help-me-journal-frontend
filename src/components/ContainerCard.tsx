@@ -16,14 +16,14 @@ import {
 import { useState } from "react"
 import { Trash2, Pencil } from "lucide-react"
 import ConfirmDelete from "./ConfirmDelete"
-import type { UpdateContainerDTO } from "@/types/dtos"
+import type { UpdateContainerTitleDTO } from "@/types/dtos"
 import { Separator } from "./ui/separator"
 import { Link } from "react-router-dom"
 import { Button } from "./ui/button"
 import type { ContainerCardProps } from "@/types/ContainerCard.types"
 import {
   useDeleteContainer,
-  useUpdateContainer,
+  useUpdateContainerTitle,
 } from "@/hooks/useContainerMutations"
 import EditContainer from "./EditContainer"
 import { toast } from "./ui/toast"
@@ -32,7 +32,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [editProjectMenuOpen, setEditProjectMenuOpen] = useState(false)
   const deleteContainer = useDeleteContainer()
-  const updateContainer = useUpdateContainer()
+  const updateContainer = useUpdateContainerTitle()
 
   return (
     <div className="h-full w-full">
@@ -74,7 +74,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
       <EditContainer
         open={editProjectMenuOpen}
         onOpenChange={setEditProjectMenuOpen}
-        onConfirm={(updatedContainerData: UpdateContainerDTO) => {
+        onConfirm={(updatedContainerData: UpdateContainerTitleDTO) => {
           setEditProjectMenuOpen(false)
           const containerType =
             container.type === "JOURNAL" ? "Journal" : "Note"
@@ -106,7 +106,7 @@ function InfoCard({ container }: ContainerCardProps) {
         <CardDescription>{container.moods}</CardDescription>
       </CardHeader>
 
-      <CardFooter>
+      <CardFooter>  
         <Link to={`containers/${container.id}`} className="w-full">
           <Button>
             View {container.type === "JOURNAL" ? "Journal" : "Note"}

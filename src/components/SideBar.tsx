@@ -28,7 +28,7 @@ export function SideBar({ open, onOpenChange }: SideBarProps) {
             </Button>
           }
         />
-        <DropdownMenuContent className="h-[calc(100vh-12rem)] w-64 overflow-y-auto p-0">
+        <DropdownMenuContent className="h-[calc(100vh-12rem)] w-64 overflow-y-auto p-0">  
           {containers && projects && (
             <RenderProjectTree
               projectName={

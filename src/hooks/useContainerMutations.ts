@@ -3,7 +3,8 @@ import {
   type SuccessResponse,
   type CreateContainerDTO,
   type ContainerDTO,
-  type UpdateContainerDTO,
+  type UpdateContainerContentDTO,
+  type UpdateContainerTitleDTO,
 } from "@/types/dtos"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
@@ -23,15 +24,15 @@ export function useCreateContainer(projectId: string) {
   })
 }
 
-export function useUpdateContainer() {
+export function useUpdateContainerTitle() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({
       containerId,
       ...updatedContainerData
-    }: UpdateContainerDTO & { containerId: string }) => {
+    }: UpdateContainerTitleDTO & { containerId: string }) => {
       const { data } = await api.patch<SuccessResponse<ContainerDTO>>(
-        `/containers/${containerId}`,
+        `/containers/${containerId}/title`,
         updatedContainerData
       )
       return data.data
@@ -43,7 +44,26 @@ export function useUpdateContainer() {
     },
   })
 }
-
+export function useUpdateContainerContent() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      containerId,
+      ...updatedContainerData
+    }: UpdateContainerContentDTO & { containerId: string }) => {
+      const { data } = await api.patch<SuccessResponse<ContainerDTO>>(
+        `/containers/${containerId}/content`,
+        updatedContainerData
+      )
+      return data.data
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["containers", data.projectId],
+      })
+    },
+  })
+}
 export function useDeleteContainer() {
   const queryClient = useQueryClient()
   return useMutation({
