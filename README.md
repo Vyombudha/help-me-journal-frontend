@@ -1,33 +1,43 @@
-# Help Me Journal Frontend
+﻿# Help Me Journal Frontend
 
-A React + TypeScript frontend for managing projects, journal-like containers, and personal reflection entries. The app is currently structured as a working MVP: signed-in users can create projects, open a project workspace, create containers, and manage entries with Clerk-authenticated requests to a backend API.
+A React + TypeScript frontend for a project-first journaling workflow. Users can sign in, create projects, organize journal-like or technical-note containers, and edit rich-text content that is tied directly to a project.
 
 Live app: https://vyombudha.github.io/help-me-journal-frontend/
 
 ## Current project status
 
-This frontend is currently in the MVP stage and is under active development. The core journaling workflow is functional, including:
+This frontend is in MVP / active development. It currently supports:
 
-- Clerk sign-in flow with signed-out landing page
-- project dashboard for browsing and creating projects
-- search for projects and containers by name
-- project-level workspace with sidebar navigation
-- container management inside a project
-- entry creation and editing within a selected container
-- React Query data synchronization for project/container/entry operations
+- Clerk authentication flow with signed-out landing page
+- project dashboard for creating and browsing projects
+- project workspace with sidebar navigation and search
+- journal / technical-note container management
+- rich text editing for container content with autosave
+- update flows for container title and content
+- React Query synchronization for project and container state
 - authenticated API requests using a Clerk bearer token
 
-The core workflow is usable, but this is not yet a finished product. It depends on a compatible backend API and still needs UX polish, broader validation, and additional functional refinements before it is production-ready.
+Recent updates focus on simplifying and strengthening the container/content experience. Instead of treating each container as a list of entries, the app now treats a container as a journal-style document with a title and rich-text body.
 
 ## Core workflow
 
 1. A user signs in with Clerk.
 2. The dashboard loads the current project list from the backend.
 3. The user creates a project or opens an existing one.
-4. The user can search projects and containers by name.
-5. Inside the project, they create containers such as journal entries or technical notes.
-6. A selected container shows its entries and allows creation or editing.
-7. Data is fetched and invalidated through TanStack Query so UI state stays aligned with the backend.
+4. The user creates a journal or technical-note container inside that project.
+5. The selected container displays an editable title and a rich-text content editor.
+6. Content is saved automatically after a brief debounce, keeping the UI aligned with the backend.
+7. The project page supports search and container navigation for a lightweight journaling flow.
+
+## Recent refactor highlights
+
+The latest refactor improves the container management flow and aligns the client with the backend contract:
+
+- split container mutations into dedicated create, title update, content update, and delete hooks
+- moved rich-text content editing to a BlockNote-based editor with debounced autosave
+- simplified the project page to focus on containers rather than separate entry records
+- added reusable UI primitives for popovers, selects, tooltips, and tabs
+- updated DTO contracts to match `ContainerDTO` fields like `title`, `content`, `type`, `moods`, and `templateConfig`
 
 ## Tech stack
 
@@ -39,9 +49,9 @@ The core workflow is usable, but this is not yet a finished product. It depends 
 - React Router
 - Axios
 - Clerk
+- BlockNote rich-text editing
 - shadcn-style UI primitives
 - Lucide icons
-- Tiptap support in the app ecosystem
 
 ## Prerequisites
 
@@ -49,7 +59,7 @@ Before starting the frontend, make sure you have:
 
 - Node.js 18 or newer
 - npm
-- a running backend API that exposes the project/container/entry routes used by the client
+- a running backend API that exposes the project and container routes used by the client
 - a Clerk app with a publishable key
 
 ## Environment variables
@@ -65,7 +75,7 @@ Notes:
 
 - `VITE_API_URL` is the base URL for the backend API.
 - `VITE_CLERK_PUBLISHABLE_KEY` is required by the Clerk provider.
-- The Axios client attaches a bearer token from Clerk on each authenticated request via `useApiAuth()`.
+- The Axios client attaches a bearer token from Clerk on each authenticated request.
 
 ## Installation
 
@@ -116,7 +126,7 @@ The current app structure is:
 
 - `/` — signed-in dashboard for viewing and creating projects
 - `/projects/:projectId` — project workspace landing page with containers
-- `/projects/:projectId/containers/:containerId` — selected container with its entries
+- `/projects/:projectId/containers/:containerId` — selected container with editable title and rich-text content
 
 Signed-out users are routed to the landing page and sign-in flow.
 
@@ -130,12 +140,9 @@ The client currently expects a backend with endpoints matching these patterns:
 - `DELETE /projects/:id`
 - `GET /projects/:projectId/containers`
 - `POST /projects/:projectId/containers`
-- `PATCH /containers/:containerId`
+- `PATCH /containers/:containerId/title`
+- `PATCH /containers/:containerId/content`
 - `DELETE /containers/:containerId`
-- `GET /containers/:containerId/entries`
-- `POST /containers/:containerId/entries`
-- `PATCH /entries/:entryId`
-- `DELETE /entries/:entryId`
 
 The frontend expects responses shaped like:
 
@@ -146,7 +153,7 @@ The frontend expects responses shaped like:
 }
 ```
 
-The DTOs used by the client include project statuses such as `IN_PROGRESS`, `COMPLETED`, and `ABANDONED`; container types like `JOURNAL` and `TECHNICAL_NOTE`; mood values such as `HAPPY`, `CALM`, `SAD`, `ANGRY`, `ANXIOUS`, `EXCITED`, `TIRED`, and `NEUTRAL`; and entry title/content fields.
+The DTOs used by the client include project statuses such as `IN_PROGRESS`, `COMPLETED`, and `ABANDONED`; container types like `JOURNAL` and `TECHNICAL_NOTE`; mood values such as `HAPPY`, `CALM`, `SAD`, `ANGRY`, `ANXIOUS`, `EXCITED`, `TIRED`, and `NEUTRAL`; and fields such as `title`, `content`, `type`, `moods`, and `templateConfig`.
 
 ## Project structure
 
@@ -167,19 +174,19 @@ Key areas:
 - `src/App.tsx` — main auth gate and route setup
 - `src/pages/LandingPage.tsx` — signed-out landing page and sign-in CTA
 - `src/pages/HomePage.tsx` — project dashboard
-- `src/pages/ProjectPage.tsx` — project workspace and nested container entry routes
-- `src/hooks/` — TanStack Query hooks for projects, containers, and entry mutations
+- `src/pages/ProjectPage.tsx` — project workspace and container view routes
+- `src/hooks/` — TanStack Query hooks for project and container mutations
 - `src/lib/api.ts` — Axios client setup
 - `src/lib/useApiAuth.ts` — Clerk token interceptor
-- `src/components/` — project cards, sidebar, dialogs, entry UI, and reusable UI elements
+- `src/components/` — project cards, sidebar, rich text editor UI, and reusable primitives
 - `src/types/dtos.ts` — shared TypeScript contracts for backend payloads
 
 ## Notes
 
-- The app is built around a project-first journaling model rather than a generic notes app.
-- The UI is intentionally simple and focused on the core workflow: plan the work, journal the context, and keep project memories close to the project itself.
+- The app is built around a project-first journaling model rather than a generic note-taking app.
+- Each container acts as a document that can be structured as a journal entry or technical note.
 - The frontend assumes the backend API is already running and reachable through `VITE_API_URL`.
-- There are currently no automated tests in the repository, so functionality is validated by the local app and type/build checks.
+- There are currently no automated tests in the repository, so functionality is validated by the local app and build/type checks.
 
 ## License
 
