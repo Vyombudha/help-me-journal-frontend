@@ -9,7 +9,7 @@ const RenderContainerData = () => {
   const { data: containers } = useContainers(projectId!)
 
   return (
-    <div className="flex h-full w-full flex-col gap-4">
+    <div className="sm-m-0 flex h-full w-full flex-col gap-4">
       <ContainerTitle
         containerId={containerId!}
         title={containers?.find((c) => c.id === containerId)?.title}
@@ -17,7 +17,7 @@ const RenderContainerData = () => {
       <EntryCard
         containerId={containerId!}
         content={containers?.find((c) => c.id === containerId)?.content}
-      />
+      />w
     </div>
   )
 }
