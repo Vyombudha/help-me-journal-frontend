@@ -11,19 +11,19 @@ import {
 } from "@/components/ui/empty"
 import type { EmptyDataProps } from "@/types/EmptyData.types"
 import CreateProject from "./CreateProject"
-import { useCreateProject } from "@/hooks/useProjectMutations"
+import { useCreateProject } from "@/hooks/useWorkspaceMutations"
 import { useState } from "react"
 import type { CreateContainerDTO, CreateProjectDTO } from "@/types/dtos"
 import CreateContainer from "./CreateContainer"
 import { useParams } from "react-router-dom"
-import { useCreateContainer } from "@/hooks/useContainerMutations"
+import { useCreatePage } from "@/hooks/usePageMutations"
 import { toast } from "./ui/toast"
 
 export function EmptyData({ dataName }: EmptyDataProps) {
   const [newProjectMenuOpen, setNewProjectMenuOpen] = useState(false)
   const createProject = useCreateProject()
   const { projectId } = useParams<{ projectId: string }>()
-  const createContainer = useCreateContainer(projectId!)
+  const createContainer = useCreatePage(projectId!)
 
   return (
     <div className="col-span-full flex h-2/3 w-full items-start">

@@ -3,7 +3,7 @@ import type { Block, PartialBlock } from "@blocknote/core"
 import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/shadcn"
 import { useDebouncedCallback } from "use-debounce"
-import { useUpdateContainerContent } from "@/hooks/useContainerMutations"
+import { useUpdatePageContent } from "@/hooks/usePageMutations"
 import "@blocknote/core/fonts/inter.css"
 import "@blocknote/shadcn/style.css"
 import * as Badge from "@/components/ui/badge"
@@ -29,12 +29,12 @@ function parseContent(content: string | undefined): PartialBlock[] | undefined {
 }
 
 export function EntryCard({ containerId, content }: EntryCardProps) {
-  const save = useUpdateContainerContent()
+  const save = useUpdatePageContent()
   const editor = useCreateBlockNote({ initialContent: parseContent(content) })
 
   const debouncedSave = useDebouncedCallback((blocks: Block[]) => {
     console.log(blocks)
-    save.mutate({ containerId, newContent: JSON.stringify(blocks) })
+    save.mutate({ pageId: containerId, newContent: JSON.stringify(blocks) })
   }, 800)
 
   // don't lose a pending save when switching containers

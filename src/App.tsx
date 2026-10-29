@@ -3,9 +3,10 @@ import { useApiAuth } from "./lib/useApiAuth"
 import ProjectPage from "./pages/ProjectPage"
 import LandingPage from "./pages/LandingPage"
 import { Route, Routes } from "react-router-dom"
-import RenderContainerData from "./components/RenderContainerData"
+import DefaultPageRedirect from "./components/DefaultPageRedirect"
 export function App() {
   useApiAuth()
+
   return (
     <div className="h-screen w-screen bg-background">
       <Show when="signed-out">
@@ -13,9 +14,8 @@ export function App() {
       </Show>
       <Show when="signed-in">
         <Routes>
-          <Route path="/" element={<ProjectPage />}>
-            <Route path="container" element={<RenderContainerData />} />
-          </Route>
+          <Route path="/" element={<DefaultPageRedirect />} />
+          <Route path="/w/:workspaceId/p/:pageId" element={<ProjectPage />} />
         </Routes>
       </Show>
     </div>

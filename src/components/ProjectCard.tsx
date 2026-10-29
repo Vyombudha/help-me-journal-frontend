@@ -17,7 +17,7 @@ import {
 import { useState } from "react"
 import { Trash2 } from "lucide-react"
 import ConfirmDelete from "./ConfirmDelete"
-import { useDeleteProject } from "@/hooks/useProjectMutations"
+import { useDeleteProject } from "@/hooks/useWorkspaceMutations"
 import { Separator } from "./ui/separator"
 import { Link } from "react-router-dom"
 import { Button } from "./ui/button"

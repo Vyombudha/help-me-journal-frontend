@@ -16,8 +16,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-import { Search, Sparkles, Home, Inbox, FrameIcon, Plus } from "lucide-react"
-import { useProjects } from "@/hooks/useProjects"
+import { Search, Sparkles, Home, FrameIcon, Plus } from "lucide-react"
+import { useWorkspaces } from "@/hooks/useWorkspaces"
 import { getTitleText } from "@/lib/utils"
 import { useUser } from "@clerk/react"
 import { AppBrand } from "./app-brand"
@@ -25,7 +25,7 @@ import { AppBrand } from "./app-brand"
 // This is sample data.
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: projects, isLoading } = useProjects()
+  const { data: projects, isLoading } = useWorkspaces()
   const { user } = useUser()
   const projectItems =
     projects?.map((p) => ({

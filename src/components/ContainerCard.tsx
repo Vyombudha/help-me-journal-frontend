@@ -19,12 +19,12 @@ import ConfirmDelete from "./ConfirmDelete"
 import { Link } from "react-router-dom"
 import { Button } from "./ui/button"
 import type { ContainerCardProps } from "@/types/ContainerCard.types"
-import { useDeleteContainer } from "@/hooks/useContainerMutations"
+import { useDeletePage } from "@/hooks/usePageMutations"
 import { toast } from "./ui/toast"
 
 export function ContainerCard({ container }: ContainerCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
-  const deleteContainer = useDeleteContainer()
+  const deleteContainer = useDeletePage()
 
   return (
     <div className="h-full w-full">

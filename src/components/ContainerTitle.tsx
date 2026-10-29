@@ -7,7 +7,7 @@ import {
 import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/shadcn"
 import { useDebouncedCallback } from "use-debounce"
-import { useUpdateContainerTitle } from "@/hooks/useContainerMutations"
+import { useUpdatePageTitle } from "@/hooks/usePageMutations"
 import "@blocknote/core/fonts/inter.css"
 import "@blocknote/shadcn/style.css"
 
@@ -28,7 +28,7 @@ export function ContainerTitle({
   containerId: string
   title: string | undefined
 }) {
-  const save = useUpdateContainerTitle()
+  const save = useUpdatePageTitle()
   const editor = useCreateBlockNote({
     schema: BlockNoteSchema.create().extend({
       blockSpecs: {
@@ -45,7 +45,7 @@ export function ContainerTitle({
 
   const debouncedSave = useDebouncedCallback(() => {
     // read at save time, so it's always post-normalization
-    save.mutate({ containerId, newTitle: JSON.stringify(editor.document) })
+    save.mutate({ pageId: containerId, newTitle: JSON.stringify(editor.document) })
   }, 800)
 
   useEffect(() => () => debouncedSave.flush(), [debouncedSave])

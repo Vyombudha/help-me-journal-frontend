@@ -1,8 +1,8 @@
-import { useProjects } from "@/hooks/useProjects"
+import { useWorkspaces } from "@/hooks/useWorkspaces"
 import { ProjectCard } from "@/components/ProjectCard"
 import { EmptyData } from "@/components/EmptyData"
 export default function RenderProjects({ search }: { search: string }) {
-  const { data: projects, isLoading, isError } = useProjects()
+  const { data: projects, isLoading, isError } = useWorkspaces()
   return (
     <>
       {isError && <h1 className="text-red-700">ERROR</h1>}

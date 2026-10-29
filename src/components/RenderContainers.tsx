@@ -1,9 +1,9 @@
 import { EmptyData } from "@/components/EmptyData"
-import { useContainers } from "@/hooks/useContainers"
+import { usePages } from "@/hooks/usePages"
 import { useParams } from "react-router-dom"
 import { ContainerCard } from "./ContainerCard"
 import { type Dispatch, type SetStateAction } from "react"
-import { useCreateContainer } from "@/hooks/useContainerMutations"
+import { useCreatePage } from "@/hooks/usePageMutations"
 import CreateContainer from "./CreateContainer"
 import type { CreateContainerDTO } from "@/types/dtos"
 import { toast } from "@/components/ui/toast"
@@ -38,8 +38,8 @@ function RenderContainers({
   search: string
 }) {
   const { projectId } = useParams<{ projectId: string }>()
-  const createContainer = useCreateContainer(projectId!)
-  const { data: containers, isLoading, isError } = useContainers(projectId!)
+  const createContainer = useCreatePage(projectId!)
+  const { data: containers, isLoading, isError } = usePages(projectId!)
   return (
     <>
       {isError && <h1 className="text-red-700">ERROR</h1>}
