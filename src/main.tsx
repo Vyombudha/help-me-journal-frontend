@@ -14,7 +14,10 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <TooltipProvider>
-          <ClerkProvider appearance={shadcn}>
+          <ClerkProvider
+            publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
+            appearance={shadcn}
+          >
             <App />
             <Toaster />
           </ClerkProvider>

@@ -1,11 +1,11 @@
 import { useAuth } from "@clerk/react"
-import { useEffect } from "react"
+import { useLayoutEffect } from "react"
 import { api } from "./api"
 
 export function useApiAuth() {
   const { getToken } = useAuth()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const interceptorId = api.interceptors.request.use(async (config) => {
       const token = await getToken()
       if (token) {
@@ -15,7 +15,7 @@ export function useApiAuth() {
     })
 
     // cleanup on unmount to avoid stacking interceptors on hot reload
-    return () => {  
+    return () => {
       api.interceptors.request.eject(interceptorId)
     }
   }, [getToken])

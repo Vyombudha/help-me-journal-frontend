@@ -22,10 +22,10 @@ function parseContent(content: string | undefined): PartialBlock[] | undefined {
 }
 
 export function ContainerTitle({
-  containerId,
+  pageId,
   title,
 }: {
-  containerId: string
+  pageId: string
   title: string | undefined
 }) {
   const save = useUpdatePageTitle()
@@ -45,7 +45,7 @@ export function ContainerTitle({
 
   const debouncedSave = useDebouncedCallback(() => {
     // read at save time, so it's always post-normalization
-    save.mutate({ pageId: containerId, newTitle: JSON.stringify(editor.document) })
+    save.mutate({ pageId: pageId, newTitle: JSON.stringify(editor.document) })
   }, 800)
 
   useEffect(() => () => debouncedSave.flush(), [debouncedSave])

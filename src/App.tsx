@@ -4,6 +4,7 @@ import ProjectPage from "./pages/ProjectPage"
 import LandingPage from "./pages/LandingPage"
 import { Route, Routes } from "react-router-dom"
 import DefaultPageRedirect from "./components/DefaultPageRedirect"
+import RenderContainerData from "./components/RenderContainerData"
 export function App() {
   useApiAuth()
 
@@ -14,8 +15,13 @@ export function App() {
       </Show>
       <Show when="signed-in">
         <Routes>
-          <Route path="/" element={<DefaultPageRedirect />} />
-          <Route path="/w/:workspaceId/p/:pageId" element={<ProjectPage />} />
+          <Route path="/" element={<ProjectPage />}>
+            <Route path="" element={<DefaultPageRedirect />} />
+            <Route
+              path="/w/:workspaceId/p/:pageId"
+              element={<RenderContainerData />}
+            />
+          </Route>
         </Routes>
       </Show>
     </div>

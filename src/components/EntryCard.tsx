@@ -28,13 +28,12 @@ function parseContent(content: string | undefined): PartialBlock[] | undefined {
   }
 }
 
-export function EntryCard({ containerId, content }: EntryCardProps) {
+export function EntryCard({ pageId, content }: EntryCardProps) {
   const save = useUpdatePageContent()
   const editor = useCreateBlockNote({ initialContent: parseContent(content) })
 
   const debouncedSave = useDebouncedCallback((blocks: Block[]) => {
-    console.log(blocks)
-    save.mutate({ pageId: containerId, newContent: JSON.stringify(blocks) })
+    save.mutate({ pageId: pageId, newContent: JSON.stringify(blocks) })
   }, 800)
 
   // don't lose a pending save when switching containers

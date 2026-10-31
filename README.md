@@ -1,193 +1,315 @@
-﻿# Help Me Journal Frontend
+# Help Me Journal
 
-A React + TypeScript frontend for a project-first journaling workflow. Users can sign in, create projects, organize journal-like or technical-note containers, and edit rich-text content that is tied directly to a project.
+Help Me Journal is a project-first journaling app: organize work into projects, then keep journal pages, technical notes, and moods alongside the work they describe.
 
-Live app: https://vyombudha.github.io/help-me-journal-frontend/
+Live app: <https://vyombudha.github.io/help-me-journal-frontend/>
 
-## Current project status
+This repository contains the React frontend. It requires a separately running API and a Clerk application for authentication.
 
-This frontend is in MVP / active development. It currently supports:
+## Run locally
 
-- Clerk authentication flow with signed-out landing page
-- project dashboard for creating and browsing projects
-- project workspace with sidebar navigation and search
-- journal / technical-note container management
-- rich text editing for container content with autosave
-- update flows for container title and content
-- React Query synchronization for project and container state
-- authenticated API requests using a Clerk bearer token
+### Requirements
 
-Recent updates focus on simplifying and strengthening the container/content experience. Instead of treating each container as a list of entries, the app now treats a container as a journal-style document with a title and rich-text body.
-
-## Core workflow
-
-1. A user signs in with Clerk.
-2. The dashboard loads the current project list from the backend.
-3. The user creates a project or opens an existing one.
-4. The user creates a journal or technical-note container inside that project.
-5. The selected container displays an editable title and a rich-text content editor.
-6. Content is saved automatically after a brief debounce, keeping the UI aligned with the backend.
-7. The project page supports search and container navigation for a lightweight journaling flow.
-
-## Recent refactor highlights
-
-The latest refactor improves the container management flow and aligns the client with the backend contract:
-
-- split container mutations into dedicated create, title update, content update, and delete hooks
-- moved rich-text content editing to a BlockNote-based editor with debounced autosave
-- simplified the project page to focus on containers rather than separate entry records
-- added reusable UI primitives for popovers, selects, tooltips, and tabs
-- updated DTO contracts to match `ContainerDTO` fields like `title`, `content`, `type`, `moods`, and `templateConfig`
-
-## Tech stack
-
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS
-- TanStack React Query
-- React Router
-- Axios
-- Clerk
-- BlockNote rich-text editing
-- shadcn-style UI primitives
-- Lucide icons
-
-## Prerequisites
-
-Before starting the frontend, make sure you have:
-
-- Node.js 18 or newer
+- Node.js 20.19+ or 22.12+
 - npm
-- a running backend API that exposes the project and container routes used by the client
-- a Clerk app with a publishable key
+- A running Help Me Journal API with the `/api/v1` routes listed below
+- A Clerk application and its publishable key
 
-## Environment variables
-
-Create a `.env` file in the project root:
-
-```env
-VITE_API_URL=http://localhost:3000
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-```
-
-Notes:
-
-- `VITE_API_URL` is the base URL for the backend API.
-- `VITE_CLERK_PUBLISHABLE_KEY` is required by the Clerk provider.
-- The Axios client attaches a bearer token from Clerk on each authenticated request.
-
-## Installation
+### Setup
 
 ```bash
+git clone https://github.com/Vyombudha/help-me-journal-frontend.git
+cd help-me-journal-frontend
 npm install
+cp .env.example .env.local
 ```
 
-Then add the environment variables above and start the app.
-
-## Development
+Set the values in `.env.local`, then start the development server:
 
 ```bash
 npm run dev
 ```
 
-Open the app in the browser at:
+Open the local URL printed by Vite (by default, <http://localhost:5173>).
 
-```text
-http://localhost:5173
-```
+### Environment variables
 
-## Production build
+| Variable | Required | Description |
+| --- | --- | --- |
+| `VITE_API_URL` | Yes | API base URL, including `/api/v1` (for example, `http://localhost:3000/api/v1`). |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Yes | Publishable key for your Clerk application. This is a browser-visible key; never put a Clerk secret key here. |
+
+Vite embeds `VITE_` variables in the client bundle. Do not put secrets in them.
+
+## What it does
+
+- Uses Clerk for sign-in and attaches the current Clerk session token as a bearer token to API requests.
+- Displays workspaces as projects and their pages as journal or technical-note entries.
+- Supports creating, renaming, and deleting workspaces and pages.
+- Supports editing page titles and rich-text content, with content saved automatically.
+- Uses TanStack Query to fetch and synchronize API data.
+
+Signed-out visitors see the landing page. After signing in, the app opens the default workspace (or the first available workspace) and its first page.
+
+## API contract
+
+The frontend expects the API base URL to include `/api/v1`; the examples below use `http://localhost:3000/api/v1`. All endpoints require a Clerk session token. Replace `$CLERK_SESSION_TOKEN` with a valid token for local API testing.
+
+Successful responses use the shape `{"success":true,"data":...}`. Error responses use `{"success":false,"message":"..."}`. The examples show representative responses; IDs and timestamps will differ.
+
+### Workspaces
+
+#### List workspaces
 
 ```bash
-npm run build
+curl -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  http://localhost:3000/api/v1/workspaces
 ```
 
-Preview the built app locally:
-
-```bash
-npm run preview
-```
-
-## Available scripts
-
-```bash
-npm run dev       # start Vite dev server
-npm run build     # run type-check and create production build
-npm run lint      # run ESLint
-npm run format    # format TypeScript/TSX files with Prettier
-npm run typecheck # run TypeScript validation without emitting files
-npm run preview   # preview the production build
-```
-
-## Application routes
-
-The current app structure is:
-
-- `/` — signed-in dashboard for viewing and creating projects
-- `/projects/:projectId` — project workspace landing page with containers
-- `/projects/:projectId/containers/:containerId` — selected container with editable title and rich-text content
-
-Signed-out users are routed to the landing page and sign-in flow.
-
-## Backend contract expected by the frontend
-
-The client currently expects a backend with endpoints matching these patterns:
-
-- `GET /projects`
-- `POST /projects`
-- `PATCH /projects/:id`
-- `DELETE /projects/:id`
-- `GET /projects/:projectId/containers`
-- `POST /projects/:projectId/containers`
-- `PATCH /containers/:containerId/title`
-- `PATCH /containers/:containerId/content`
-- `DELETE /containers/:containerId`
-
-The frontend expects responses shaped like:
-
-```ts
+```json
 {
-  success: true,
-  data: ...
+  "success": true,
+  "data": [
+    {
+      "id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "name": "Website launch",
+      "description": "Plan and reflect on the launch",
+      "isDefault": true,
+      "ownerId": "user_123",
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    }
+  ]
 }
 ```
 
-The DTOs used by the client include project statuses such as `IN_PROGRESS`, `COMPLETED`, and `ABANDONED`; container types like `JOURNAL` and `TECHNICAL_NOTE`; mood values such as `HAPPY`, `CALM`, `SAD`, `ANGRY`, `ANXIOUS`, `EXCITED`, `TIRED`, and `NEUTRAL`; and fields such as `title`, `content`, `type`, `moods`, and `templateConfig`.
+#### Create a workspace
 
-## Project structure
-
-```text
-src/
-  App.tsx
-  main.tsx
-  assets/
-  components/
-  hooks/
-  lib/
-  pages/
-  types/
+```bash
+curl -X POST http://localhost:3000/api/v1/workspaces \
+  -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Website launch","description":"Plan and reflect on the launch"}'
 ```
 
-Key areas:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+    "name": "Website launch",
+    "description": "Plan and reflect on the launch",
+    "isDefault": false,
+    "ownerId": "user_123",
+    "createdAt": "2026-01-15T10:00:00.000Z",
+    "updatedAt": "2026-01-15T10:00:00.000Z"
+  }
+}
+```
 
-- `src/App.tsx` — main auth gate and route setup
-- `src/pages/LandingPage.tsx` — signed-out landing page and sign-in CTA
-- `src/pages/HomePage.tsx` — project dashboard
-- `src/pages/ProjectPage.tsx` — project workspace and container view routes
-- `src/hooks/` — TanStack Query hooks for project and container mutations
-- `src/lib/api.ts` — Axios client setup
-- `src/lib/useApiAuth.ts` — Clerk token interceptor
-- `src/components/` — project cards, sidebar, rich text editor UI, and reusable primitives
-- `src/types/dtos.ts` — shared TypeScript contracts for backend payloads
+#### Update a workspace
 
-## Notes
+Both `newName` and `newDescription` are sent in the request body.
 
-- The app is built around a project-first journaling model rather than a generic note-taking app.
-- Each container acts as a document that can be structured as a journal entry or technical note.
-- The frontend assumes the backend API is already running and reachable through `VITE_API_URL`.
-- There are currently no automated tests in the repository, so functionality is validated by the local app and build/type checks.
+```bash
+curl -X PATCH http://localhost:3000/api/v1/workspaces/a1b2c3d4-e5f6-4789-a012-3456789abcde \
+  -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"newName":"Website launch","newDescription":"Plan, build, and reflect on the launch"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+    "name": "Website launch",
+    "description": "Plan, build, and reflect on the launch",
+    "isDefault": false,
+    "ownerId": "user_123",
+    "createdAt": "2026-01-15T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:00:00.000Z"
+  }
+}
+```
+
+#### Delete a workspace
+
+```bash
+curl -X DELETE \
+  -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  http://localhost:3000/api/v1/workspaces/a1b2c3d4-e5f6-4789-a012-3456789abcde
+```
+
+The client expects the deleted workspace in the success response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+    "name": "Website launch",
+    "description": "Plan and reflect on the launch",
+    "isDefault": false,
+    "ownerId": "user_123",
+    "createdAt": "2026-01-15T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:00:00.000Z"
+  }
+}
+```
+
+### Pages
+
+Page status values are `IN_PROGRESS`, `COMPLETED`, and `ABANDONED`. Mood values are `HAPPY`, `CALM`, `SAD`, `ANGRY`, `ANXIOUS`, `EXCITED`, `TIRED`, and `NEUTRAL`.
+
+#### List pages in a workspace
+
+```bash
+curl -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  http://localhost:3000/api/v1/workspaces/a1b2c3d4-e5f6-4789-a012-3456789abcde/pages
+```
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+      "title": "First steps",
+      "content": "[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"I started by outlining the launch.\"}]}]",
+      "workspaceId": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+      "status": "IN_PROGRESS",
+      "templateConfig": null,
+      "moods": ["EXCITED"],
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "updatedAt": "2026-01-15T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+#### Create a page
+
+`moods` is required and may be an empty array.
+
+```bash
+curl -X POST http://localhost:3000/api/v1/workspaces/a1b2c3d4-e5f6-4789-a012-3456789abcde/pages \
+  -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"First steps","moods":["EXCITED"]}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+    "title": "First steps",
+    "content": "",
+    "workspaceId": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+    "status": "IN_PROGRESS",
+    "templateConfig": null,
+    "moods": ["EXCITED"],
+    "createdAt": "2026-01-15T10:00:00.000Z",
+    "updatedAt": "2026-01-15T10:00:00.000Z"
+  }
+}
+```
+
+#### Update a page title
+
+```bash
+curl -X PATCH http://localhost:3000/api/v1/pages/b2c3d4e5-f6a7-4890-b123-456789abcdef/title \
+  -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"newTitle":"First week"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+    "title": "First week",
+    "content": "",
+    "workspaceId": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+    "status": "IN_PROGRESS",
+    "templateConfig": null,
+    "moods": ["EXCITED"],
+    "createdAt": "2026-01-15T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:00:00.000Z"
+  }
+}
+```
+
+#### Update page content
+
+The content value is a JSON-serialized BlockNote document. The API accepts an empty string as well.
+
+```bash
+curl -X PATCH http://localhost:3000/api/v1/pages/b2c3d4e5-f6a7-4890-b123-456789abcdef/content \
+  -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"newContent":"[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"I started by outlining the launch.\"}]}]"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+    "title": "First week",
+    "content": "[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"I started by outlining the launch.\"}]}]",
+    "workspaceId": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+    "status": "IN_PROGRESS",
+    "templateConfig": null,
+    "moods": ["EXCITED"],
+    "createdAt": "2026-01-15T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:05:00.000Z"
+  }
+}
+```
+
+#### Delete a page
+
+```bash
+curl -X DELETE \
+  -H "Authorization: Bearer $CLERK_SESSION_TOKEN" \
+  http://localhost:3000/api/v1/pages/b2c3d4e5-f6a7-4890-b123-456789abcdef
+```
+
+The client expects the deleted page in the success response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "b2c3d4e5-f6a7-4890-b123-456789abcdef",
+    "title": "First week",
+    "content": "",
+    "workspaceId": "a1b2c3d4-e5f6-4789-a012-3456789abcde",
+    "status": "IN_PROGRESS",
+    "templateConfig": null,
+    "moods": ["EXCITED"],
+    "createdAt": "2026-01-15T10:00:00.000Z",
+    "updatedAt": "2026-01-16T10:05:00.000Z"
+  }
+}
+```
+
+There is no OpenAPI/Swagger specification in this repository. The frontend's shared API types are in [`src/types/dtos.ts`](./src/types/dtos.ts).
+
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite development server. |
+| `npm run build` | Type-check and create a production build. |
+| `npm run preview` | Preview the production build locally. |
+| `npm run lint` | Run ESLint. |
+| `npm run typecheck` | Run TypeScript validation without emitting files. |
+| `npm run format` | Format TypeScript and TSX files with Prettier. |
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License. See [LICENSE](./LICENSE).
