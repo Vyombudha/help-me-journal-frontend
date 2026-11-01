@@ -1,7 +1,7 @@
-import type { UpdateProjectDTO } from "./dtos"
+import type { UpdateWorkspaceDTO } from "./dtos"
 
-export type UpdateProjectProps = {
+export type UpdateWorkspaceProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: (newProjectData: UpdateProjectDTO) => void
+  onConfirm: (newProjectData: UpdateWorkspaceDTO) => void
 }

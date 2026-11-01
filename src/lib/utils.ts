@@ -27,8 +27,12 @@ export async function downloadMarkdown(
   content: string | undefined | null,
   filename = "document.md"
 ) {
-  const blocks = parseContent(content) ?? EMPTY_PAGE
-  const markdown = await converterEditor.blocksToMarkdownLossy(blocks)
+  const blocks = parseContent(content)
+
+  if (!blocks) {
+    return false
+  }
+  const markdown = converterEditor.blocksToMarkdownLossy(blocks)
   const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" })
   const url = URL.createObjectURL(blob)
 
@@ -39,6 +43,7 @@ export async function downloadMarkdown(
   a.click()
   a.remove()
   URL.revokeObjectURL(url)
+  return true
 }
 export function parseContent(
   content: string | undefined | null

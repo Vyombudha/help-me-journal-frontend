@@ -1,26 +1,21 @@
 import { useEffect } from "react"
 import type { Block } from "@blocknote/core"
 import { useCreateBlockNote } from "@blocknote/react"
-import { BlockNoteView } from "@blocknote/shadcn"
+import { BlockNoteView } from "@blocknote/mantine"
+import "@blocknote/mantine/style.css"
 import { useDebouncedCallback } from "use-debounce"
 import { useUpdatePageContent } from "@/hooks/usePageMutations"
 import "@blocknote/core/fonts/inter.css"
-import "@blocknote/shadcn/style.css"
-import * as Badge from "@/components/ui/badge"
-import * as Button from "@/components/ui/button"
-import * as DropdownMenu from "@/components/ui/dropdown-menu"
-import * as Input from "@/components/ui/input"
-import * as Label from "@/components/ui/label"
-import * as Popover from "@/components/ui/popover"
-import * as Select from "@/components/ui/select"
-import * as Tabs from "@/components/ui/tabs"
-import * as Toggle from "@/components/ui/toggle"
-import * as Tooltip from "@/components/ui/tooltip"
-import type { EntryCardProps } from "@/types/EntryCard.types"
 import { useParams } from "react-router-dom"
 import { parseContent } from "@/lib/utils"
 
-export function EntryCard({ pageId, content }: EntryCardProps) {
+export function EntryCard({
+  pageId,
+  content,
+}: {
+  pageId: string
+  content: string
+}) {
   const { workspaceId } = useParams<{ workspaceId: string }>()
   const save = useUpdatePageContent(workspaceId!)
   const editor = useCreateBlockNote({ initialContent: parseContent(content) })
@@ -35,18 +30,6 @@ export function EntryCard({ pageId, content }: EntryCardProps) {
     <BlockNoteView
       editor={editor}
       theme="dark"
-      shadCNComponents={{
-        Badge,
-        Button,
-        DropdownMenu,
-        Input,
-        Label,
-        Popover,
-        Select,
-        Tabs,
-        Toggle,
-        Tooltip,
-      }}
       onChange={() => debouncedSave(editor.document)}
     />
   )

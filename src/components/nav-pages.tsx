@@ -88,9 +88,14 @@ export function NavPages({
                 <DropdownMenuItem
                   onClick={() => {
                     const page = pagesData?.find((p) => p.id === item.id)
-                    downloadMarkdown(
-                      page?.content,
-                      `${item.name || "Untitled Page"}.md`
+                    const safeName = item.name || "Untitled Page"
+                    toast.promise(
+                      downloadMarkdown(page?.content, `${safeName}.md`),
+                      {
+                        loading: "Preparing download",
+                        success: "Page downloaded",
+                        error: "Failed to download page",
+                      }
                     )
                   }}
                 >

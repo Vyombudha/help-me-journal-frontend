@@ -5,11 +5,10 @@ import {
   type PartialBlock,
 } from "@blocknote/core"
 import { useCreateBlockNote } from "@blocknote/react"
-import { BlockNoteView } from "@blocknote/shadcn"
+import { BlockNoteView } from "@blocknote/mantine"
 import { useDebouncedCallback } from "use-debounce"
 import { useUpdatePageTitle } from "@/hooks/usePageMutations"
 import "@blocknote/core/fonts/inter.css"
-import "@blocknote/shadcn/style.css"
 
 function parseContent(content: string | undefined): PartialBlock[] | undefined {
   if (!content) return undefined
@@ -75,7 +74,6 @@ export function ContainerTitle({
       slashMenu={false}
       formattingToolbar={false}
       sideMenu={false}
-      shadCNComponents={{/* same as yours */}}
       onChange={handleChange}
     />
   )

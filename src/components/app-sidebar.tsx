@@ -71,8 +71,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       status: workspace.status,
     })) ?? []
   const sidebarUser = {
-    name: user?.fullName,
-    email: user?.primaryEmailAddress?.emailAddress,
+    name: user?.fullName ?? "User",
+    email: user?.primaryEmailAddress?.emailAddress ?? "No email",
     avatar: user?.imageUrl,
   }
   const data = {
