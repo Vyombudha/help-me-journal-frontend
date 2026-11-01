@@ -9,7 +9,7 @@ import "@blocknote/core/fonts/inter.css"
 import { useParams } from "react-router-dom"
 import { parseContent } from "@/lib/utils"
 
-export function EntryCard({
+export default function EntryCard({
   pageId,
   content,
 }: {

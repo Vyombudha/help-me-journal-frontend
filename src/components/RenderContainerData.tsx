@@ -1,9 +1,12 @@
 import { useParams } from "react-router-dom"
 import { usePages } from "@/hooks/usePages"
-import { EntryCard } from "./EntryCard"
+
 import { ContainerTitle } from "./ContainerTitle"
 import { Skeleton } from "./ui/skeleton"
 import { EmptyData } from "./EmptyData"
+import React from "react"
+
+const EntryCard = React.lazy(() => import("./EntryCard"))
 
 const RenderContainerData = () => {
   const { pageId } = useParams<{ pageId: string }>()
