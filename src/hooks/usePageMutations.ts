@@ -45,7 +45,7 @@ export function useUpdatePageTitle() {
   })
 }
 
-export function useUpdatePageContent() {
+export function useUpdatePageContent(workspaceId: string) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({
@@ -58,15 +58,15 @@ export function useUpdatePageContent() {
       )
       return data.data
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pages", data.workspaceId],
+        queryKey: ["pages", workspaceId],
       })
     },
   })
 }
 
-export function useDeletePage() {
+export function useDeletePage(workspaceId: string) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (pageId: string) => {
@@ -75,9 +75,9 @@ export function useDeletePage() {
       )
       return data.data
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["pages", data.workspaceId],
+        queryKey: ["pages", workspaceId],
       })
     },
   })

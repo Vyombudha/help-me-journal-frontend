@@ -1,8 +1,8 @@
 import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
+import { NavPages } from "@/components/nav-pages"
+// import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -16,55 +16,102 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-import { Search, Sparkles, Home, FrameIcon, Plus } from "lucide-react"
-import { useWorkspaces } from "@/hooks/useWorkspaces"
+import {
+  Search,
+  Sparkles,
+  Home,
+  FrameIcon,
+  Plus,
+  AudioWaveformIcon,
+} from "lucide-react"
 import { getTitleText } from "@/lib/utils"
 import { useUser } from "@clerk/react"
-import { AppBrand } from "./app-brand"
+import { usePages } from "@/hooks/usePages"
+import { useNavigate, useParams } from "react-router-dom"
+import { useWorkspaces } from "@/hooks/useWorkspaces"
+import { WorkspaceSwticher } from "./workspace-switcher"
+import { useCreatePage } from "@/hooks/usePageMutations"
+import type { CreatePageDTO } from "@/types/dtos"
+import { toast } from "./ui/toast"
 
 // This is sample data.
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: projects, isLoading } = useWorkspaces()
+  const { workspaceId } = useParams<{ workspaceId: string }>()
+  const { pageId } = useParams<{ pageId: string }>()
+  const { data: workspaces } = useWorkspaces()
+  const { data: pages, isLoading } = usePages(workspaceId!)
   const { user } = useUser()
-  const projectItems =
-    projects?.map((p) => ({
-      name: getTitleText(p.name),
-      url: `/${p.id}`,
+  const createPage = useCreatePage(workspaceId!)
+  const navigate = useNavigate()
+  const title = JSON.stringify([
+    {
+      type: "heading",
+      props: { level: 1 },
+      content: [{ type: "text", text: "Untitled Page", styles: {} }],
+    },
+  ])
+  const newPageData: CreatePageDTO = {
+    title,
+    moods: ["CALM", "HAPPY"],
+  }
+  const pageItems =
+    pages?.map((page) => ({
+      id: page.id,
+      name: getTitleText(page.title),
+      url: `w/${workspaceId}/p/${page.id}`,
+      isActive: pageId === page.id,
       icon: <FrameIcon />,
     })) ?? []
-
+  const workspaceItems =
+    workspaces?.map((workspace) => ({
+      id: workspace.id,
+      name: workspace.name,
+      logo: AudioWaveformIcon,
+      status: workspace.status,
+    })) ?? []
   const sidebarUser = {
     name: user?.fullName,
     email: user?.primaryEmailAddress?.emailAddress,
     avatar: user?.imageUrl,
   }
   const data = {
-    projects: projectItems,
+    workspaces: workspaceItems,
+    pageItems,
     user: sidebarUser,
     navMain: [
       {
         title: "Search",
-        url: "#",
         icon: Search,
       },
       {
         title: "Ask AI",
-        url: "#",
         icon: Sparkles,
         toolText: "coming soon! ",
       },
       {
         title: "Home",
-        url: "/",
         icon: Home,
         isActive: true,
       },
       {
-        title: "New Project",
-        url: "/container",
+        title: "New Page",
         icon: Plus,
         badge: "10",
+        onClick: () => {
+          if (!workspaceId) return
+          toast.promise(
+            createPage.mutateAsync(newPageData).then((page) => {
+              navigate(`/w/${workspaceId}/p/${page.id}`)
+              return page
+            }),
+            {
+              loading: "Creating Page",
+              success: "Page Created",
+              error: "Failed to Create Page",
+            }
+          )
+        },
       },
     ],
   }
@@ -72,13 +119,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar className="border-r-0" collapsible="icon" {...props}>
       <SidebarHeader>
-        <AppBrand />
+        <WorkspaceSwticher workspaces={data.workspaces!} />
         <NavMain items={data.navMain} />
       </SidebarHeader>
       <SidebarContent>
         {isLoading ? (
           <SidebarGroup>
-            <SidebarGroupLabel>Projects</SidebarGroupLabel>
+            <SidebarGroupLabel>Content Pages</SidebarGroupLabel>
             <SidebarMenu>
               {Array.from({ length: 5 }).map((_, i) => (
                 <SidebarMenuItem key={i}>
@@ -88,12 +135,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenu>
           </SidebarGroup>
         ) : (
-          <NavProjects projects={data.projects} />
+          <NavPages pages={data.pageItems} />
         )}
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

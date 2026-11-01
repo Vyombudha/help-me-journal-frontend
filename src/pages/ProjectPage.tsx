@@ -13,9 +13,20 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Outlet } from "react-router-dom"
+import { usePages } from "@/hooks/usePages"
+import { useWorkspaces } from "@/hooks/useWorkspaces"
+import { getTitleText } from "@/lib/utils"
+import { Outlet, useParams } from "react-router-dom"
 
 export default function ProjectPage() {
+  const { workspaceId } = useParams<{ workspaceId: string }>()
+  const { pageId } = useParams<{ pageId: string }>()
+
+  const { data: workspaces } = useWorkspaces()
+  const workspaceName = workspaces?.find((ws) => ws.id === workspaceId)?.name
+  const { data: pages } = usePages(workspaceId!)
+  const pageName = getTitleText(pages?.find((pg) => pg.id === pageId)?.title)
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -30,13 +41,13 @@ export default function ProjectPage() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Build Your Application
+                  <BreadcrumbLink href={workspaceId}>
+                    {workspaceName}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>{pageName}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>

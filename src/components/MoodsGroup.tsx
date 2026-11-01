@@ -1,5 +1,5 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import type { MoodsGroupProps } from "@/types/CreateContainer.types"
+import type { MoodsGroupProps } from "@/types/CreatePage.types"
 import type { Mood } from "@/types/dtos"
 import {
   Smile,

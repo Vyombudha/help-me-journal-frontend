@@ -1,4 +1,4 @@
-export { cn } from "cn"
+import { BlockNoteEditor, type PartialBlock } from "@blocknote/core"
 
 export function getTitleText(content: string | undefined): string {
   if (!content) return ""
@@ -14,5 +14,40 @@ export function getTitleText(content: string | undefined): string {
       .trim()
   } catch {
     return ""
+  }
+}
+
+export const EMPTY_PAGE: PartialBlock[] = [
+  { type: "heading", props: { level: 1 }, content: "Untitled Page" },
+]
+
+const converterEditor = BlockNoteEditor.create()
+
+export async function downloadMarkdown(
+  content: string | undefined | null,
+  filename = "document.md"
+) {
+  const blocks = parseContent(content) ?? EMPTY_PAGE
+  const markdown = await converterEditor.blocksToMarkdownLossy(blocks)
+  const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" })
+  const url = URL.createObjectURL(blob)
+
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+export function parseContent(
+  content: string | undefined | null
+): PartialBlock[] | undefined {
+  if (!content) return undefined
+  try {
+    const parsed = JSON.parse(content)
+    return Array.isArray(parsed) && parsed.length ? parsed : undefined
+  } catch {
+    return undefined
   }
 }

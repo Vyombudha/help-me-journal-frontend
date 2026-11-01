@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom"
 import { ContainerCard } from "./ContainerCard"
 import { type Dispatch, type SetStateAction } from "react"
 import { useCreatePage } from "@/hooks/usePageMutations"
-import CreateContainer from "./CreateContainer"
+import CreateContainer from "./CreatePage"
 import type { CreateContainerDTO } from "@/types/dtos"
 import { toast } from "@/components/ui/toast"
 

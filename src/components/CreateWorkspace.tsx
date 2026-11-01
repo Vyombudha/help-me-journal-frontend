@@ -11,18 +11,18 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import type { CreateProjectProps } from "@/types/CreateProject.types"
-export default function CreateProject({
+import type { CreateWorkspaceProps } from "@/types/CreateWorkspace.types"
+export default function CreateWorkspace({
   open,
   onOpenChange,
   onConfirm,
-}: CreateProjectProps) {
+}: CreateWorkspaceProps) {
   function handleSubmission(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const name = formData.get("name") as string
     const description = formData.get("description") as string
- 
+
     onConfirm({ name, description })
     onOpenChange(false) // close the dialog after confirming
   }

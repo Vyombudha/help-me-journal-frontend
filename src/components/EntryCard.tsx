@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import type { Block, PartialBlock } from "@blocknote/core"
+import type { Block } from "@blocknote/core"
 import { useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/shadcn"
 import { useDebouncedCallback } from "use-debounce"
@@ -17,19 +17,12 @@ import * as Tabs from "@/components/ui/tabs"
 import * as Toggle from "@/components/ui/toggle"
 import * as Tooltip from "@/components/ui/tooltip"
 import type { EntryCardProps } from "@/types/EntryCard.types"
-
-function parseContent(content: string | undefined): PartialBlock[] | undefined {
-  if (!content) return undefined
-  try {
-    const parsed = JSON.parse(content)
-    return Array.isArray(parsed) && parsed.length ? parsed : undefined
-  } catch {
-    return undefined
-  }
-}
+import { useParams } from "react-router-dom"
+import { parseContent } from "@/lib/utils"
 
 export function EntryCard({ pageId, content }: EntryCardProps) {
-  const save = useUpdatePageContent()
+  const { workspaceId } = useParams<{ workspaceId: string }>()
+  const save = useUpdatePageContent(workspaceId!)
   const editor = useCreateBlockNote({ initialContent: parseContent(content) })
 
   const debouncedSave = useDebouncedCallback((blocks: Block[]) => {

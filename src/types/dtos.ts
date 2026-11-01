@@ -1,8 +1,12 @@
 // Shared API types for Help Me Journal.
 
 // ---- Enums ----
-export const PAGE_STATUSES = ["IN_PROGRESS", "COMPLETED", "ABANDONED"] as const
-export type PageStatus = (typeof PAGE_STATUSES)[number]
+export const WORKSPACE_STATUSES = [
+  "IN_PROGRESS",
+  "COMPLETED",
+  "ABANDONED",
+] as const
+export type WorkspaceStatus = (typeof WORKSPACE_STATUSES)[number]
 
 export const MOODS = [
   "HAPPY",
@@ -33,6 +37,7 @@ export interface WorkspaceDTO {
   ownerId: string
   createdAt: string
   updatedAt: string
+  status: WorkspaceStatus
 }
 
 export interface PageDTO {
@@ -40,7 +45,6 @@ export interface PageDTO {
   title: string
   content: string
   workspaceId: string
-  status: PageStatus
   templateConfig: Record<string, unknown> | null
   moods: Mood[]
   createdAt: string

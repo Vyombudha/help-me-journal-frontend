@@ -1,5 +1,4 @@
 import { type LucideIcon } from "lucide-react"
-import { Link } from "react-router-dom"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -11,7 +10,7 @@ export function NavMain({
 }: {
   items: {
     title: string
-    url: string
+    onClick?: () => void
     icon: LucideIcon
     isActive?: boolean
     toolText?: string
@@ -24,7 +23,7 @@ export function NavMain({
           <SidebarMenuButton
             isActive={item.isActive}
             tooltip={item.toolText}
-            render={<Link to={item.url} />}
+            onClick={item.onClick}
           >
             <item.icon />
             <span>{item.title}</span>

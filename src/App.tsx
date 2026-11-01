@@ -17,6 +17,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<ProjectPage />}>
             <Route path="" element={<DefaultPageRedirect />} />
+            <Route path="/w/:workspaceId" element={<DefaultPageRedirect />} />
             <Route
               path="/w/:workspaceId/p/:pageId"
               element={<RenderContainerData />}
