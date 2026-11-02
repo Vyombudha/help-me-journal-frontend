@@ -72,7 +72,7 @@ export function ContainerTitle({
       onKeyDown={(e) => {
         if (e.key === "Enter") e.preventDefault()
       }}
-      className="w-full bg-transparent text-2xl font-bold text-foreground outline-none placeholder:text-muted-foreground sm:text-4xl"
+      className="w-full bg-transparent font-[Inter,sans-serif] text-5xl leading-tight font-bold text-foreground outline-none placeholder:text-muted-foreground"
     />
   )
 }
