@@ -1,10 +1,13 @@
 import { Show } from "@clerk/react"
 import { useApiAuth } from "./lib/useApiAuth"
 import ProjectPage from "./pages/ProjectPage"
-import LandingPage from "./pages/LandingPage"
 import { Route, Routes } from "react-router-dom"
 import DefaultPageRedirect from "./components/DefaultPageRedirect"
 import RenderContainerData from "./components/RenderContainerData"
+import { lazy } from "react"
+
+const LandingPage = lazy(() => import("./pages/LandingPage"))
+
 export function App() {
   useApiAuth()
 
