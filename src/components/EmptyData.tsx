@@ -16,15 +16,8 @@ import { toast } from "./ui/toast"
 
 // only handle Empty Workspace (i.e no pages for a workspace) but will also handle No Workspaces to later on
 export function EmptyData({ workspaceId }: EmptyDataProps) {
-  const title = JSON.stringify([
-    {
-      type: "heading",
-      props: { level: 1 },
-      content: [{ type: "text", text: "Untitled Page", styles: {} }],
-    },
-  ])
   const newPageData: CreatePageDTO = {
-    title,
+    title: "New Page",
     moods: ["CALM", "HAPPY"],
   }
   const createPage = useCreatePage(workspaceId)

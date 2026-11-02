@@ -44,15 +44,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser()
   const createPage = useCreatePage(workspaceId!)
   const navigate = useNavigate()
-  const title = JSON.stringify([
-    {
-      type: "heading",
-      props: { level: 1 },
-      content: [{ type: "text", text: "Untitled Page", styles: {} }],
-    },
-  ])
   const newPageData: CreatePageDTO = {
-    title,
+    title: "New Page",
     moods: ["CALM", "HAPPY"],
   }
   const pageItems =

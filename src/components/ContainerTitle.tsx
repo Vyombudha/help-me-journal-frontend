@@ -14,28 +14,10 @@ function readTitle(raw: string | undefined): { text: string; id?: string } {
     const blocks = JSON.parse(raw) as StoredBlock[]
     const first = Array.isArray(blocks) ? blocks[0] : undefined
     const text = (first?.content ?? []).map((c) => c.text ?? "").join("")
-    return { text, id: first?.id }
+    return { text }
   } catch {
     return { text: raw } // legacy: plain-string titles
   }
-}
-
-// Write it back in the same shape BlockNote used, so other readers still work
-function writeTitle(text: string, id?: string) {
-  return JSON.stringify([
-    {
-      id: id ?? crypto.randomUUID(),
-      type: "heading",
-      props: {
-        textColor: "default",
-        backgroundColor: "default",
-        textAlignment: "left",
-        level: 1,
-      },
-      content: text ? [{ type: "text", text, styles: {} }] : [],
-      children: [],
-    },
-  ])
 }
 
 export function ContainerTitle({
@@ -52,7 +34,7 @@ export function ContainerTitle({
   const debouncedSave = useDebouncedCallback(() => {
     save.mutate({
       pageId,
-      newTitle: writeTitle(latest.current, initial.id),
+      newTitle: latest.current,
     })
   }, 800)
 

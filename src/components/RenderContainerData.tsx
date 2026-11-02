@@ -31,8 +31,18 @@ const RenderContainerData = () => {
       key={page.id}
       className="flex h-full w-full flex-col gap-4 px-4 sm:px-8 [&_.bn-editor]:px-0!"
     >
-      <ContainerTitle pageId={pageId!} title={page.title} />
-      <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+      <Suspense
+        fallback={
+          <>
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full" />
+          </>
+        }
+      >
+        <ContainerTitle pageId={pageId!} title={page.title} />
         <EntryCard pageId={pageId!} content={page.content} />
       </Suspense>
     </div>
