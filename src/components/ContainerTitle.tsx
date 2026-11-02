@@ -1,23 +1,41 @@
-import { useEffect } from "react"
-import {
-  BlockNoteSchema,
-  createHeadingBlockSpec,
-  type PartialBlock,
-} from "@blocknote/core"
-import { useCreateBlockNote } from "@blocknote/react"
-import { BlockNoteView } from "@blocknote/mantine"
+import { useEffect, useRef, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 import { useUpdatePageTitle } from "@/hooks/usePageMutations"
-import "@blocknote/core/fonts/inter.css"
 
-function parseContent(content: string | undefined): PartialBlock[] | undefined {
-  if (!content) return undefined
+type StoredBlock = {
+  id?: string
+  content?: { type: string; text?: string }[]
+}
+
+// Pull the plain text and block id out of the stored BlockNote JSON
+function readTitle(raw: string | undefined): { text: string; id?: string } {
+  if (!raw) return { text: "" }
   try {
-    const parsed = JSON.parse(content)
-    return Array.isArray(parsed) && parsed.length ? parsed : undefined
+    const blocks = JSON.parse(raw) as StoredBlock[]
+    const first = Array.isArray(blocks) ? blocks[0] : undefined
+    const text = (first?.content ?? []).map((c) => c.text ?? "").join("")
+    return { text, id: first?.id }
   } catch {
-    return undefined
+    return { text: raw } // legacy: plain-string titles
   }
+}
+
+// Write it back in the same shape BlockNote used, so other readers still work
+function writeTitle(text: string, id?: string) {
+  return JSON.stringify([
+    {
+      id: id ?? crypto.randomUUID(),
+      type: "heading",
+      props: {
+        textColor: "default",
+        backgroundColor: "default",
+        textAlignment: "left",
+        level: 1,
+      },
+      content: text ? [{ type: "text", text, styles: {} }] : [],
+      children: [],
+    },
+  ])
 }
 
 export function ContainerTitle({
@@ -28,53 +46,33 @@ export function ContainerTitle({
   title: string | undefined
 }) {
   const save = useUpdatePageTitle()
-  const editor = useCreateBlockNote({
-    schema: BlockNoteSchema.create().extend({
-      blockSpecs: {
-        heading: createHeadingBlockSpec({
-          levels: [1],
-          allowToggleHeadings: false,
-        }),
-      },
-    }),
-    initialContent: parseContent(title) ?? [
-      { type: "heading", props: { level: 1 } },
-    ],
-  })
-
+  const [initial] = useState(() => readTitle(title))
+  const [value, setValue] = useState(initial.text)
+  const latest = useRef(initial.text)
   const debouncedSave = useDebouncedCallback(() => {
-    // read at save time, so it's always post-normalization
-    save.mutate({ pageId: pageId, newTitle: JSON.stringify(editor.document) })
+    save.mutate({
+      pageId,
+      newTitle: writeTitle(latest.current, initial.id),
+    })
   }, 800)
 
+  // flush a pending save when leaving the page
   useEffect(() => () => debouncedSave.flush(), [debouncedSave])
 
-  const handleChange = () => {
-    const first = editor.document[0]
-
-    // collect first, update after (don't mutate while traversing)
-    const extras: typeof editor.document = []
-    editor.forEachBlock((block) => {
-      if (block.id !== first?.id && block.type === "heading") extras.push(block)
-      return true
-    })
-    for (const block of extras) editor.updateBlock(block, { type: "paragraph" })
-
-    if (first && first.type !== "heading") {
-      editor.updateBlock(first, { type: "heading", props: { level: 1 } })
-    }
-
-    debouncedSave()
-  }
-
   return (
-    <BlockNoteView
-      editor={editor}
-      theme="dark"
-      slashMenu={false}
-      formattingToolbar={false}
-      sideMenu={false}
-      onChange={handleChange}
+    <input
+      value={value}
+      placeholder="Untitled Page"
+      aria-label="Page title"
+      onChange={(e) => {
+        latest.current = e.target.value
+        setValue(e.target.value)
+        debouncedSave()
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.preventDefault()
+      }}
+      className="w-full bg-transparent text-2xl font-bold text-foreground outline-none placeholder:text-muted-foreground sm:text-4xl"
     />
   )
 }
