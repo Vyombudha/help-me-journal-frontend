@@ -28,7 +28,6 @@ import { useState } from "react"
 import { toast } from "./ui/toast"
 import { useDeletePage } from "@/hooks/usePageMutations"
 import { downloadMarkdown } from "@/lib/utils"
-import { usePages } from "@/hooks/usePages"
 
 export function NavPages({
   pages,
@@ -45,7 +44,6 @@ export function NavPages({
   const navigate = useNavigate()
   const { isMobile } = useSidebar()
   const deletePage = useDeletePage(workspaceId!)
-  const { data: pagesData } = usePages(workspaceId!)
   const [pendingDelete, setPendingDelete] = useState<{
     id: string
     isActive: boolean
@@ -91,16 +89,12 @@ export function NavPages({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    const page = pagesData?.find((p) => p.id === item.id)
                     const safeName = item.name || "Untitled Page"
-                    toast.promise(
-                      downloadMarkdown(page?.content, `${safeName}.md`),
-                      {
-                        loading: "Preparing download",
-                        success: "Page downloaded",
-                        error: "Failed to download page",
-                      }
-                    )
+                    toast.promise(downloadMarkdown(item.id, `${safeName}.md`), {
+                      loading: "Preparing download",
+                      success: "Page downloaded",
+                      error: "Failed to download page",
+                    })
                   }}
                 >
                   <ArrowRightIcon />

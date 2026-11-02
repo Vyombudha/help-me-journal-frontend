@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { usePages } from "@/hooks/usePages"
+import { usePage, usePages } from "@/hooks/usePages"
 
 import { ContainerTitle } from "./ContainerTitle"
 import { Skeleton } from "./ui/skeleton"
@@ -11,8 +11,8 @@ const RenderContainerData = () => {
   const { pageId } = useParams<{ pageId: string }>()
   const { workspaceId } = useParams<{ workspaceId: string }>()
   const { data: pages, isLoading } = usePages(workspaceId!)
-  if (isLoading) return <Skeleton /> // or a skeleton
-  const page = pages?.find((p) => p.id === pageId)
+  const { data: page, isLoading: loadingPage } = usePage(pageId!)
+  if (isLoading || loadingPage) return <Skeleton />
 
   if (!pages?.length) {
     return <EmptyData workspaceId={workspaceId!} />

@@ -1,4 +1,5 @@
 import type { PartialBlock } from "@blocknote/core"
+import { api } from "@/lib/api"
 
 export function getTitleText(content: string | undefined): string {
   if (!content) return ""
@@ -22,19 +23,20 @@ export const EMPTY_PAGE: PartialBlock[] = [
 ]
 
 export async function downloadMarkdown(
-  content: string | undefined | null,
+  pageId: string,
   filename = "document.md"
 ) {
-  const blocks = parseContent(content)
-  if (!blocks) return false
+  const { data: page } = await api.get(`/pages/${pageId}`)
+  console.log(page)
 
-  // loaded on demand, so it stays out of the main bundle
+  const blocks = parseContent(page.data.content)
+
   const { BlockNoteEditor } = await import("@blocknote/core")
-  const markdown = BlockNoteEditor.create().blocksToMarkdownLossy(blocks)
+  const markdown = await BlockNoteEditor.create().blocksToMarkdownLossy(blocks)
 
-  const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" })
-  const url = URL.createObjectURL(blob)
-
+  const url = URL.createObjectURL(
+    new Blob([markdown], { type: "text/markdown;charset=utf-8" })
+  )
   const a = document.createElement("a")
   a.href = url
   a.download = filename
@@ -42,7 +44,6 @@ export async function downloadMarkdown(
   a.click()
   a.remove()
   URL.revokeObjectURL(url)
-  return true
 }
 export function parseContent(
   content: string | undefined | null
