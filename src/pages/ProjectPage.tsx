@@ -52,6 +52,22 @@ export default function ProjectPage() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <div className="ml-auto px-4">
+            <a
+              href="https://github.com/Vyombudha/help-me-journal-frontend"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              title="View source on GitHub"
+              className="inline-flex size-9 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+            >
+              <img
+                src="https://cdn.simpleicons.org/github/white"
+                width="24"
+                alt=""
+              />
+            </a>
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Outlet />
