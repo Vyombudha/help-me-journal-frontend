@@ -13,6 +13,7 @@ import type { EmptyDataProps } from "@/types/EmptyData.types"
 import type { CreatePageDTO } from "@/types/dtos"
 import { useCreatePage } from "@/hooks/usePageMutations"
 import { toast } from "./ui/toast"
+import { useNavigate } from "react-router-dom"
 
 // only handle Empty Workspace (i.e no pages for a workspace) but will also handle No Workspaces to later on
 export function EmptyData({ workspaceId }: EmptyDataProps) {
@@ -20,6 +21,7 @@ export function EmptyData({ workspaceId }: EmptyDataProps) {
     title: "New Page",
     moods: ["CALM", "HAPPY"],
   }
+  const navigate = useNavigate()
   const createPage = useCreatePage(workspaceId)
   return (
     <div className="col-span-full flex h-2/3 w-full items-start">
@@ -37,11 +39,17 @@ export function EmptyData({ workspaceId }: EmptyDataProps) {
         <EmptyContent className="flex-row justify-center gap-2">
           <Button
             onClick={() => {
-              toast.promise(createPage.mutateAsync(newPageData), {
-                loading: `Creating Page`,
-                success: `Page Created`,
-                error: `Failed to Create Page`,
-              })
+              toast.promise(
+                createPage.mutateAsync(newPageData).then((page) => {
+                  navigate(`/w/${workspaceId}/p/${page.id}`)
+                  return page
+                }),
+                {
+                  loading: "Creating Page",
+                  success: "Page Created",
+                  error: "Failed to Create Page",
+                }
+              )
             }}
             size={"lg"}
           >
