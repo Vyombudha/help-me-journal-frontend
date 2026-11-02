@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar"
 import { usePages } from "@/hooks/usePages"
 import { useWorkspaces } from "@/hooks/useWorkspaces"
-import { getTitleText } from "@/lib/utils"
+import { readTitle } from "@/lib/utils"
 import { Outlet, useParams } from "react-router-dom"
 
 export default function ProjectPage() {
@@ -25,7 +25,7 @@ export default function ProjectPage() {
   const { data: workspaces } = useWorkspaces()
   const workspaceName = workspaces?.find((ws) => ws.id === workspaceId)?.name
   const { data: pages } = usePages(workspaceId!)
-  const pageName = getTitleText(pages?.find((pg) => pg.id === pageId)?.title)
+  const pageName = readTitle(pages?.find((pg) => pg.id === pageId)?.title)
 
   return (
     <SidebarProvider>

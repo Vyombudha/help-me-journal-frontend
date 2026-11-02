@@ -24,7 +24,7 @@ import {
   Plus,
   AudioWaveformIcon,
 } from "lucide-react"
-import { getTitleText } from "@/lib/utils"
+import { readTitle } from "@/lib/utils"
 import { useUser } from "@clerk/react"
 import { usePages } from "@/hooks/usePages"
 import { useNavigate, useParams } from "react-router-dom"
@@ -33,8 +33,7 @@ import { WorkspaceSwticher } from "./workspace-switcher"
 import { useCreatePage } from "@/hooks/usePageMutations"
 import type { CreatePageDTO } from "@/types/dtos"
 import { toast } from "./ui/toast"
-
-// This is sample data.
+import { NavUser } from "./nav-user"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { workspaceId } = useParams<{ workspaceId: string }>()
@@ -51,7 +50,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pageItems =
     pages?.map((page) => ({
       id: page.id,
-      name: getTitleText(page.title),
+      name: readTitle(page.title),
       url: `w/${workspaceId}/p/${page.id}`,
       isActive: pageId === page.id,
       icon: <FrameIcon />,
@@ -66,7 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const sidebarUser = {
     name: user?.fullName ?? "User",
     email: user?.primaryEmailAddress?.emailAddress ?? "No email",
-    avatar: user?.imageUrl,
+    avatar: user?.imageUrl ?? "",
   }
   const data = {
     workspaces: workspaceItems,
@@ -131,7 +130,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <NavPages pages={data.pageItems} />
         )}
       </SidebarContent>
-      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

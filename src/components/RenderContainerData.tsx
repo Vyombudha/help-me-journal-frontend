@@ -31,6 +31,7 @@ const RenderContainerData = () => {
       key={page.id}
       className="flex h-full w-full flex-col gap-4 px-4 sm:px-8 [&_.bn-editor]:px-0!"
     >
+      <ContainerTitle pageId={pageId!} title={page.title} />
       <Suspense
         fallback={
           <>
@@ -42,7 +43,6 @@ const RenderContainerData = () => {
           </>
         }
       >
-        <ContainerTitle pageId={pageId!} title={page.title} />
         <EntryCard pageId={pageId!} content={page.content} />
       </Suspense>
     </div>

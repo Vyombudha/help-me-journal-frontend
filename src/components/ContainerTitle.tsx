@@ -1,24 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 import { useUpdatePageTitle } from "@/hooks/usePageMutations"
-
-type StoredBlock = {
-  id?: string
-  content?: { type: string; text?: string }[]
-}
-
-// Pull the plain text and block id out of the stored BlockNote JSON
-function readTitle(raw: string | undefined): { text: string; id?: string } {
-  if (!raw) return { text: "" }
-  try {
-    const blocks = JSON.parse(raw) as StoredBlock[]
-    const first = Array.isArray(blocks) ? blocks[0] : undefined
-    const text = (first?.content ?? []).map((c) => c.text ?? "").join("")
-    return { text }
-  } catch {
-    return { text: raw } // legacy: plain-string titles
-  }
-}
+import { readTitle } from "@/lib/utils"
 
 export function ContainerTitle({
   pageId,
@@ -29,9 +12,11 @@ export function ContainerTitle({
 }) {
   const save = useUpdatePageTitle()
   const [initial] = useState(() => readTitle(title))
-  const [value, setValue] = useState(initial.text)
-  const latest = useRef(initial.text)
+  const [value, setValue] = useState(initial)
+  const latest = useRef(initial)
   const debouncedSave = useDebouncedCallback(() => {
+    console.log("NEW TITLE : ", latest.current)
+
     save.mutate({
       pageId,
       newTitle: latest.current,

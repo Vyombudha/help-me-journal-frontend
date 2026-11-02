@@ -1,20 +1,21 @@
 import type { PartialBlock } from "@blocknote/core"
 import { api } from "@/lib/api"
 
-export function getTitleText(content: string | undefined): string {
-  if (!content) return ""
+type StoredBlock = {
+  id?: string
+  content?: { type: string; text?: string }[]
+}
+
+// Pull the plain text and block id out of the stored BlockNote JSON
+export function readTitle(raw: string | undefined): string {
+  if (!raw) return "Untitled Page"
   try {
-    const blocks = JSON.parse(content)
-    const first = blocks?.[0]
-    if (!Array.isArray(first?.content)) return ""
-    return first.content
-      .map((node: { type: string; text?: string }) =>
-        node.type === "text" ? (node.text ?? "") : ""
-      )
-      .join("")
-      .trim()
+    const blocks = JSON.parse(raw) as StoredBlock[]
+    const first = Array.isArray(blocks) ? blocks[0] : undefined
+    const text = (first?.content ?? []).map((c) => c.text ?? "").join("")
+    return text
   } catch {
-    return ""
+    return raw // legacy: plain-string titles
   }
 }
 
