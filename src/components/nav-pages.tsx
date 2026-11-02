@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/sidebar"
 import {
   MoreHorizontalIcon,
-  FolderIcon,
   ArrowRightIcon,
   Trash2Icon,
+  View,
 } from "lucide-react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import ConfirmDelete from "./ConfirmDelete"
@@ -81,8 +81,12 @@ export function NavPages({
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
-                <DropdownMenuItem>
-                  <FolderIcon />
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate(`/w/${workspaceId}/p/${item.id}`)
+                  }}
+                >
+                  <View />
                   <span>View Page</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem

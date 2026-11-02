@@ -4,9 +4,7 @@ import { usePages } from "@/hooks/usePages"
 import { ContainerTitle } from "./ContainerTitle"
 import { Skeleton } from "./ui/skeleton"
 import { EmptyData } from "./EmptyData"
-import React from "react"
-
-const EntryCard = React.lazy(() => import("./EntryCard"))
+import EntryCard from "./EntryCard"
 
 const RenderContainerData = () => {
   const { pageId } = useParams<{ pageId: string }>()
@@ -28,13 +26,9 @@ const RenderContainerData = () => {
   }
 
   return (
-    <div className="sm-m-0 flex h-full w-full flex-col gap-4">
-      <ContainerTitle key={page?.id} pageId={pageId!} title={page?.title} />
-      <EntryCard
-        key={page?.createdAt}
-        pageId={pageId!}
-        content={page?.content}
-      />
+    <div key={page.id} className="sm-m-0 flex h-full w-full flex-col gap-4">
+      <ContainerTitle pageId={pageId!} title={page.title} />
+      <EntryCard pageId={pageId!} content={page.content} />
     </div>
   )
 }
