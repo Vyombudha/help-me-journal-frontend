@@ -7,6 +7,7 @@ import { useDebouncedCallback } from "use-debounce"
 import { useUpdatePageContent } from "@/hooks/usePageMutations"
 import "@blocknote/core/fonts/inter.css"
 import { parseContent } from "@/lib/utils"
+import { useTheme } from "./theme-provider"
 
 export default function EntryCard({
   pageId,
@@ -15,6 +16,8 @@ export default function EntryCard({
   pageId: string
   content: string
 }) {
+  const { resolvedTheme } = useTheme()
+
   const save = useUpdatePageContent()
   const editor = useCreateBlockNote({ initialContent: parseContent(content) })
 
@@ -27,7 +30,7 @@ export default function EntryCard({
   return (
     <BlockNoteView
       editor={editor}
-      theme="dark"
+      theme={resolvedTheme}
       onChange={() => debouncedSave(editor.document)}
     />
   )
