@@ -41,11 +41,14 @@ export function useUpdatePageTitle() {
       queryClient.invalidateQueries({
         queryKey: ["pages", data.workspaceId],
       })
+      queryClient.invalidateQueries({
+        queryKey: ["page", data.id],
+      })
     },
   })
 }
 
-export function useUpdatePageContent(workspaceId: string) {
+export function useUpdatePageContent() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({
@@ -58,9 +61,9 @@ export function useUpdatePageContent(workspaceId: string) {
       )
       return data.data
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["pages", workspaceId],
+        queryKey: ["page", data.id],
       })
     },
   })

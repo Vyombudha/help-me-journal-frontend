@@ -6,7 +6,6 @@ import "@blocknote/mantine/style.css"
 import { useDebouncedCallback } from "use-debounce"
 import { useUpdatePageContent } from "@/hooks/usePageMutations"
 import "@blocknote/core/fonts/inter.css"
-import { useParams } from "react-router-dom"
 import { parseContent } from "@/lib/utils"
 
 export default function EntryCard({
@@ -16,8 +15,7 @@ export default function EntryCard({
   pageId: string
   content: string
 }) {
-  const { workspaceId } = useParams<{ workspaceId: string }>()
-  const save = useUpdatePageContent(workspaceId!)
+  const save = useUpdatePageContent()
   const editor = useCreateBlockNote({ initialContent: parseContent(content) })
 
   const debouncedSave = useDebouncedCallback((blocks: Block[]) => {

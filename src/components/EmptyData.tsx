@@ -14,6 +14,7 @@ import type { CreatePageDTO } from "@/types/dtos"
 import { useCreatePage } from "@/hooks/usePageMutations"
 import { toast } from "./ui/toast"
 
+// only handle Empty Workspace (i.e no pages for a workspace) but will also handle No Workspaces to later on
 export function EmptyData({ workspaceId }: EmptyDataProps) {
   const title = JSON.stringify([
     {
